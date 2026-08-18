@@ -170,7 +170,7 @@ public struct NavGraph: Codable, Sendable, Equatable {
         }
     }
 
-    static func squaredDistance(_ a: Position, _ b: Position) -> Double {
+    public static func squaredDistance(_ a: Position, _ b: Position) -> Double {
         let dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z
         return dx * dx + dy * dy + dz * dz
     }

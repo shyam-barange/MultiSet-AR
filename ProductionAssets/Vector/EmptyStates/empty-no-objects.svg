@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <g stroke="#000" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke">
+    <path opacity=".16" d="M32 64h192M32 128h192M32 192h192M64 32v192M128 32v192M192 32v192"/>
+    <path opacity=".48" stroke-dasharray="6 6" d="m128 70 50 29v58l-50 29-50-29V99l50-29Z"/>
+    <path opacity=".48" stroke-dasharray="6 6" d="m78 99 50 29 50-29M128 128v58"/>
+    <circle cx="128" cy="128" r="4" fill="#000" stroke="none"/>
+  </g>
+</svg>
