@@ -20,7 +20,7 @@ public protocol ARExperience: AnyObject, ObservableObject {
     func teardown()
 }
 
-public struct ExperienceConfiguration: Sendable {
+public struct ExperienceConfiguration: Sendable, Identifiable {
     public var mode: ExperienceMode
     public var target: MapTarget
     public var localizationMode: LocalizationMode
@@ -37,6 +37,12 @@ public struct ExperienceConfiguration: Sendable {
     public var pointsOfInterest: [PointOfInterest]
     public var destinationPOIID: String?
     public var navGraph: NavGraph?
+
+    /// Distinguishes one configured session from another, so a `fullScreenCover`
+    /// keyed on it rebuilds when the mode or target changes.
+    public var id: String {
+        "\(mode.rawValue)-\(target.code)-\(localizationMode.rawValue)"
+    }
 
     public init(
         mode: ExperienceMode,

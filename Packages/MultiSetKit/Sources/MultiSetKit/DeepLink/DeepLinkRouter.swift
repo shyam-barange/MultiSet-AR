@@ -107,9 +107,11 @@ public struct DeepLinkRouter: Sendable {
             .map(String.init)
     }
 
-    /// Rejects traversal attempts, percent-encoded payloads, non-ASCII
-    /// homoglyphs, and anything over the length a real code can be.
-    func validated(_ candidate: String) -> String? {
+    /// Validates a bare code, for manual entry and for scanner payloads that
+    /// carry a code rather than a URL. Rejects traversal attempts,
+    /// percent-encoded payloads, non-ASCII homoglyphs, and anything longer than
+    /// a real code can be.
+    public func validated(_ candidate: String) -> String? {
         guard !candidate.isEmpty, candidate.count <= Self.maxCodeLength else { return nil }
         guard candidate.unicodeScalars.allSatisfy({ Self.codeCharacters.contains($0) }) else { return nil }
         return candidate

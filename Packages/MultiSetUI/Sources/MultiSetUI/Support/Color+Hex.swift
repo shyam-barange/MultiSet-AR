@@ -3,7 +3,7 @@ import SwiftUI
 extension Color {
     /// Creates a color from a `#RRGGBB` or `#RRGGBBAA` string. Invalid input yields magenta
     /// so a bad token is visible in review rather than silently transparent.
-    init(hex: String) {
+    public init(hex: String) {
         let raw = hex.hasPrefix("#") ? String(hex.dropFirst()) : hex
         guard let value = UInt64(raw, radix: 16), raw.count == 6 || raw.count == 8 else {
             self = .init(red: 1, green: 0, blue: 1)
@@ -21,7 +21,7 @@ extension Color {
     }
 
     /// Resolves to `light` or `dark` from the rendering trait collection.
-    static func adaptive(light: Color, dark: Color) -> Color {
+    public static func adaptive(light: Color, dark: Color) -> Color {
         Color(UIColor { traits in
             UIColor(traits.userInterfaceStyle == .dark ? dark : light)
         })

@@ -1,0 +1,17 @@
+// The App Clip. Deliberately does NOT link MultiSetSDK.xcframework: the SDK
+// requires a clientId and clientSecret, and the Clip runs for anonymous
+// strangers. It reaches the platform with an experience token instead.
+
+PRODUCT_BUNDLE_IDENTIFIER = $(MULTISET_BUNDLE_ID_PREFIX).Clip
+PRODUCT_NAME = MultiSet AR Clip
+INFOPLIST_FILE = Clip/Info.plist
+CODE_SIGN_ENTITLEMENTS = Clip/MultiSetARClip.entitlements
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
+ENABLE_PREVIEWS = YES
+GENERATE_INFOPLIST_FILE = NO
+SWIFT_EMIT_LOC_STRINGS = YES
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
+
+// App Clips ship for iPhone only. Declaring iPad support would oblige us to
+// support every orientation, which a handheld AR session does not want.
+TARGETED_DEVICE_FAMILY = 1

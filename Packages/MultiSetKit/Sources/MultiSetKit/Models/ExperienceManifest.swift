@@ -68,7 +68,7 @@ public struct PointOfInterest: Codable, Sendable, Identifiable, Hashable {
 
 /// Everything an AR session needs to run, resolved from a `spaceCode`. The Clip
 /// obtains this with an anonymous experience token and never holds a credential.
-public struct ExperienceManifest: Sendable, Equatable {
+public struct ExperienceManifest: Sendable, Equatable, Identifiable {
     public var spaceCode: String
     public var mode: ExperienceMode
     public var target: MapTarget
@@ -100,6 +100,8 @@ public struct ExperienceManifest: Sendable, Equatable {
         self.navGraph = navGraph
         self.token = token
     }
+
+    public var id: String { spaceCode }
 
     public var destination: PointOfInterest? {
         guard let destinationPOIID else { return pointsOfInterest.first }

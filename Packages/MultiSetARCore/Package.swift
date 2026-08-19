@@ -8,7 +8,8 @@ let package = Package(
         .library(name: "MultiSetARCore", targets: ["MultiSetARCore"])
     ],
     dependencies: [
-        .package(path: "../MultiSetKit")
+        .package(path: "../MultiSetKit"),
+        .package(path: "../MultiSetUI")
     ],
     targets: [
         // Deliberately has no dependency on MultiSetSDK. The SDK-backed
@@ -17,7 +18,7 @@ let package = Package(
         // clientSecret out of the Clip binary.
         .target(
             name: "MultiSetARCore",
-            dependencies: ["MultiSetKit"],
+            dependencies: ["MultiSetKit", "MultiSetUI"],
             swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
         ),
         .testTarget(name: "MultiSetARCoreTests", dependencies: ["MultiSetARCore"])
