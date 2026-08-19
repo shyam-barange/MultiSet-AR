@@ -83,7 +83,7 @@ final class StateArtTests: XCTestCase {
     }
 
     func testCoverageMatchesTheProducedAssetSet() {
-        XCTAssertEqual(HomeImage.allCases.count, 1)
+        XCTAssertEqual(HomeImage.allCases.count, 6)
         XCTAssertEqual(OnboardingImage.allCases.count, 3)
         XCTAssertEqual(LearnImage.allCases.count, 6)
         XCTAssertEqual(StateArt.allCases.count, 4)

@@ -178,6 +178,7 @@ struct HomeView: View {
                 symbol: "qrcode.viewfinder",
                 title: "Scan code",
                 subtitle: "Use camera",
+                artwork: .scanCode,
                 primary: true
             )
         }
@@ -187,6 +188,7 @@ struct HomeView: View {
                 symbol: "keyboard",
                 title: "Enter code",
                 subtitle: "Type instead",
+                artwork: .enterCode,
                 primary: false
             )
         }
@@ -196,32 +198,56 @@ struct HomeView: View {
         symbol: String,
         title: String,
         subtitle: String,
+        artwork: HomeImage,
         primary: Bool
     ) -> some View {
-        VStack(alignment: .leading, spacing: MSSpacing.md) {
-            HStack {
-                Image(systemName: symbol)
-                    .font(.system(size: 23, weight: .semibold))
-                Spacer(minLength: 0)
-                Image(systemName: "arrow.up.right")
-                    .font(.system(size: 12, weight: .bold))
-                    .opacity(0.72)
-            }
+        ZStack(alignment: .bottomLeading) {
+            cardArtwork(artwork, fallback: primary ? MSColor.accent : MSColor.surfaceSunken)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(MSFont.headline)
-                Text(subtitle).font(MSFont.caption).opacity(0.72)
+            LinearGradient(
+                colors: [.black.opacity(0.82), .black.opacity(0.54), .black.opacity(0.1)],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.62)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            VStack(alignment: .leading, spacing: MSSpacing.md) {
+                HStack {
+                    Image(systemName: symbol)
+                        .font(.system(size: 20, weight: .semibold))
+                        .frame(width: 40, height: 40)
+                        .background(.ultraThinMaterial, in: Circle())
+                    Spacer(minLength: 0)
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 12, weight: .bold))
+                        .frame(width: 32, height: 32)
+                        .background(.black.opacity(0.26), in: Circle())
+                }
+
+                Spacer(minLength: MSSpacing.sm)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).font(MSFont.headline)
+                    Text(subtitle).font(MSFont.caption).opacity(0.76)
+                }
             }
+            .padding(MSSpacing.lg)
         }
-        .foregroundStyle(primary ? MSColor.onAccent : MSColor.textPrimary)
-        .padding(MSSpacing.lg)
-        .frame(maxWidth: .infinity, minHeight: 132, alignment: .leading)
-        .background(primary ? MSColor.accent : MSColor.surface)
+        .foregroundStyle(.white)
+        .frame(maxWidth: .infinity, minHeight: 160, alignment: .leading)
         .overlay(
             RoundedRectangle(cornerRadius: MSRadius.lg)
-                .strokeBorder(primary ? Color.clear : MSColor.borderSubtle, lineWidth: 1)
+                .strokeBorder(
+                    primary ? MSColor.accent.opacity(0.72) : Color.white.opacity(0.13),
+                    lineWidth: 1
+                )
         )
         .clipShape(RoundedRectangle(cornerRadius: MSRadius.lg))
+        .shadow(color: primary ? MSColor.accent.opacity(0.14) : .clear, radius: 14, y: 7)
         .contentShape(Rectangle())
     }
 
@@ -249,55 +275,88 @@ struct HomeView: View {
     }
 
     private func demoCard(_ demo: DemoKind) -> some View {
-        VStack(alignment: .leading, spacing: MSSpacing.md) {
-            ZStack(alignment: .bottomLeading) {
-                LinearGradient(
-                    colors: [demo.tint.opacity(0.86), demo.tint.opacity(0.24)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                Image(systemName: demo.symbolName)
-                    .font(.system(size: 38, weight: .light))
-                    .symbolRenderingMode(.hierarchical)
+        ZStack(alignment: .bottomLeading) {
+            cardArtwork(demo.artwork, fallback: demo.tint)
+
+            LinearGradient(
+                colors: [.black.opacity(0.04), .black.opacity(0.24), .black.opacity(0.96)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            VStack(alignment: .leading, spacing: MSSpacing.sm) {
+                HStack {
+                    Image(systemName: demo.symbolName)
+                        .font(.system(size: 18, weight: .medium))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.white)
+                        .frame(width: 40, height: 40)
+                        .background(.ultraThinMaterial, in: Circle())
+                    Spacer(minLength: 0)
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 32, height: 32)
+                        .background(.black.opacity(0.25), in: Circle())
+                }
+
+                Spacer(minLength: MSSpacing.xl)
+
+                Text(demo.eyebrow.uppercased())
+                    .font(MSFont.monoSmall.weight(.semibold))
+                    .tracking(0.6)
+                    .foregroundStyle(demo.tint)
+
+                Text(demo.title)
+                    .font(MSFont.headline)
                     .foregroundStyle(.white)
-                    .padding(MSSpacing.lg)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(demo.shortSubtitle)
+                    .font(MSFont.caption)
+                    .foregroundStyle(.white.opacity(0.72))
+                    .lineLimit(2)
+
+                HStack {
+                    Text("Try demo")
+                        .font(MSFont.captionEmphasis)
+                    Spacer(minLength: 0)
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 11, weight: .bold))
+                }
+                .foregroundStyle(.white)
+                .padding(.top, MSSpacing.xs)
             }
-            .frame(height: 112)
-            .clipShape(RoundedRectangle(cornerRadius: MSRadius.md))
-
-            Text(demo.eyebrow.uppercased())
-                .font(MSFont.monoSmall.weight(.semibold))
-                .tracking(0.6)
-                .foregroundStyle(demo.tint)
-
-            Text(demo.title)
-                .font(MSFont.headline)
-                .foregroundStyle(MSColor.textPrimary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Text(demo.shortSubtitle)
-                .font(MSFont.caption)
-                .foregroundStyle(MSColor.textSecondary)
-                .lineLimit(2)
-
-            HStack {
-                Text("Try demo")
-                    .font(MSFont.captionEmphasis)
-                Spacer(minLength: 0)
-                Image(systemName: "arrow.right")
-                    .font(.system(size: 11, weight: .bold))
-            }
-            .foregroundStyle(MSColor.textPrimary)
+            .padding(MSSpacing.lg)
         }
-        .padding(MSSpacing.md)
-        .frame(width: 236)
-        .frame(minHeight: 300, alignment: .topLeading)
-        .background(MSColor.surface)
+        .frame(width: 236, height: 336)
         .overlay(
             RoundedRectangle(cornerRadius: MSRadius.lg)
-                .strokeBorder(MSColor.borderSubtle, lineWidth: 1)
+                .strokeBorder(Color.white.opacity(0.13), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: MSRadius.lg))
+        .shadow(color: demo.tint.opacity(0.12), radius: 12, y: 7)
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private func cardArtwork(_ artwork: HomeImage, fallback: Color) -> some View {
+        if let image = artwork.image {
+            GeometryReader { proxy in
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                    .clipped()
+            }
+            .accessibilityHidden(true)
+        } else {
+            LinearGradient(
+                colors: [fallback, Color.black],
+                startPoint: .topTrailing,
+                endPoint: .bottomLeading
+            )
+        }
     }
 
     private var workspaceSection: some View {
@@ -422,6 +481,14 @@ struct HomeView: View {
 }
 
 private extension DemoKind {
+    var artwork: HomeImage {
+        switch self {
+        case .objectTracking: .objectTracking
+        case .syntheticNavigation: .navigation
+        case .simulatedLocalization: .localization
+        }
+    }
+
     var eyebrow: String {
         switch self {
         case .objectTracking: "Object tracking"

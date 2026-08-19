@@ -46,6 +46,11 @@ public extension CatalogImage {
 /// Home-screen feature imagery. App target — see `CatalogImage`.
 public enum HomeImage: String, CatalogImage, CaseIterable, Sendable {
     case spatialHero = "home-spatial-hero"
+    case scanCode = "home-card-scan-code"
+    case enterCode = "home-card-enter-code"
+    case objectTracking = "home-card-object-tracking"
+    case navigation = "home-card-navigation"
+    case localization = "home-card-localization"
 
     public var assetName: String { rawValue }
     public static var bundle: Bundle? { nil }

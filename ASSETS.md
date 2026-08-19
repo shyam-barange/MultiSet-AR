@@ -55,7 +55,7 @@ Produced to the direction in `Assets/multiset-ar-asset-production-brief.md`.
 
 | | |
 |---|---|
-| Home | 1536×1024 · `home-spatial-hero` |
+| Home | Hero: 1536×1024 · `home-spatial-hero`; action cards: 1536×1024 · `home-card-{scan-code,enter-code}`; demo cards: 1024×1536 · `home-card-{object-tracking,navigation,localization}` |
 | Onboarding | 1290² · `onboarding-01-map`, `-02-localize`, `-03-guide` |
 | Learn | 1600×1000 · `learn-vps`, `-object-tracking`, `-mapping`, `-e57`, `-3dgs`, `-360` |
 | Format | HEIC, single scale. Home uses one adaptable composition; Onboarding and Learn use light in **Any** + dark in **Dark** on one image set. |
@@ -181,7 +181,7 @@ engineering data.
 
 ## Validation completed
 
-- All 20 HEIC files decode as HEIF/HEVC still images at their specified dimensions.
+- All 25 HEIC files decode as HEIF/HEVC still images at their specified dimensions.
 - Every compressed image is within its production byte budget.
 - The parent-app and standalone production catalogs compile successfully with `actool`.
 - The app icon variants are 1024×1024 RGB PNGs without alpha.
@@ -206,5 +206,5 @@ engineering data.
 | `Assets/multiSet_logo_white.jpg` (1024², no alpha) | White treatment of the mark. No current use; a JPEG without alpha is hard to place over anything. |
 | `Assets/multiset_logo.png` (2048²) | Source for the superseded icon generator only. |
 
-Everything else produced is wired: 1 Home hero, 3 onboarding sets, 6 Learn sets,
-4 state illustrations, and the app icon in both targets.
+Everything else produced is wired: 1 Home hero, 5 Home card backgrounds,
+3 onboarding sets, 6 Learn sets, 4 state illustrations, and the app icon in both targets.
