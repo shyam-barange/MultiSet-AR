@@ -24,6 +24,11 @@ final actor StubTransport: HTTPTransport {
         return requests[index].value(forHTTPHeaderField: field)
     }
 
+    func body(at index: Int) -> Data? {
+        guard requests.indices.contains(index) else { return nil }
+        return requests[index].httpBody
+    }
+
     func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         requests.append(request)
         if delay > .zero {

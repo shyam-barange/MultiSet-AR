@@ -70,7 +70,7 @@ public actor MockMultiSetAPI: MultiSetAPI {
         return Fixtures.plan
     }
 
-    public func mintM2MCredentials(name: String) async throws -> M2MCredentials {
+    public func mintM2MCredentials(name: String, scopes: [M2MScope]) async throws -> M2MCredentials {
         try await gate()
         return M2MCredentials(clientId: "mock-client-id", clientSecret: "mock-client-secret")
     }

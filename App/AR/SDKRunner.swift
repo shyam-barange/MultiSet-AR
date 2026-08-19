@@ -31,7 +31,10 @@ struct SDKRunner: View {
     private enum Resolution: Equatable {
         case resolving
         case ready
-        case missingCredentials
+        /// Signed in, but the SDK credentials the AR screens need could not be
+        /// created. Localization still runs — see `restFallback`.
+        case restFallback(reason: MultiSetError)
+        case signInRequired
     }
 
     var body: some View {
@@ -39,8 +42,10 @@ struct SDKRunner: View {
             switch resolution {
             case .resolving:
                 loading
-            case .missingCredentials:
-                missingCredentials
+            case .signInRequired:
+                signInRequired
+            case .restFallback(let reason):
+                restFallback(reason: reason)
             case .ready:
                 if let credentials {
                     session(with: credentials)
@@ -73,50 +78,125 @@ struct SDKRunner: View {
     private var loading: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            ProgressView().tint(MSColor.AR.text)
+            VStack(spacing: MSSpacing.md) {
+                ProgressView().tint(MSColor.AR.text)
+                Text("Preparing the session…")
+                    .font(MSFont.caption)
+                    .foregroundStyle(MSColor.AR.textDim)
+            }
         }
     }
 
-    private var missingCredentials: some View {
+    private var signInRequired: some View {
         ZStack {
             Color.black.ignoresSafeArea()
             SDKFailureOverlay(
-                title: "SDK credentials needed",
+                title: "Sign in to localize",
                 message: """
-                This screen runs the MultiSet SDK, which authenticates with a client ID \
-                and secret. The app creates those for you after sign-in — try signing in \
-                again, or create a set in the developer portal.
+                Localizing runs against the maps in your MultiSet account, so it needs                 you signed in. Everything on the Home tab works without an account.
                 """,
-                onRetry: { Task { await mintCredentials() } },
+                onRetry: { Task { await resolveCredentials() } },
                 onExit: onExit
             )
         }
     }
 
+    /// Signed in, but no SDK credentials. Rather than dead-ending, this runs the same
+    /// REST localization the App Clip uses — driven by the signed-in user's own access
+    /// token, refreshed as needed. The mesh overlay is the one thing lost: the SDK
+    /// renders it with its own glTF parser and Metal shader, which the REST path has
+    /// no equivalent of.
+    @ViewBuilder
+    private func restFallback(reason: MultiSetError) -> some View {
+        switch mode {
+        case .localize(let target):
+            ARExperienceScreen(
+                configuration: ExperienceConfiguration(
+                    mode: .localize,
+                    target: target.restTarget,
+                    localizationMode: target.restLocalizationMode
+                ),
+                providerFactory: { _ in (RESTPoseProvider(api: model.api, mode: target.restLocalizationMode), nil) },
+                onExit: onExit
+            )
+            .task { await announceFallback(reason) }
+        case .trackObjects(let codes):
+            ARExperienceScreen(
+                configuration: ExperienceConfiguration(
+                    mode: .track,
+                    target: .map(code: codes.first ?? ""),
+                    objectCodes: codes
+                ),
+                providerFactory: { _ in
+                    let rest = RESTPoseProvider(api: model.api)
+                    return (rest, rest)
+                },
+                onExit: onExit
+            )
+            .task { await announceFallback(reason) }
+        }
+    }
+
+    private func announceFallback(_ reason: MultiSetError) async {
+        model.toast = MSToast(
+            message: "Running without the SDK, so no mesh overlay. \(reason.errorDescription ?? "")",
+            tone: .info
+        )
+    }
+
     private func resolveCredentials() async {
+        resolution = .resolving
+
         if let stored = await model.auth.storedMachineCredentials {
             credentials = stored
             resolution = .ready
             return
         }
-        await mintCredentials()
-    }
 
-    private func mintCredentials() async {
-        resolution = .resolving
-        await model.ensureSDKCredentials()
+        guard model.isSignedIn else {
+            resolution = .signInRequired
+            return
+        }
+
+        // A signed-in user has everything needed to create SDK credentials, so this
+        // is done for them rather than asked of them.
+        if let failure = await model.ensureSDKCredentials() {
+            resolution = failure == .unauthorized ? .signInRequired : .restFallback(reason: failure)
+            return
+        }
+
         if let stored = await model.auth.storedMachineCredentials {
             credentials = stored
             resolution = .ready
         } else {
-            resolution = .missingCredentials
+            resolution = .restFallback(reason: .decoding(context: "SDK credentials"))
         }
     }
 }
 
-/// The hosted-experience runner, unchanged: an experience opened from a QR code runs
-/// on the REST pose provider so the parent app behaves exactly like the App Clip,
-/// which cannot link the SDK at all.
+extension SDKSession.Target {
+    /// The equivalent target for the REST engine, which addresses maps and map sets
+    /// the same way but has no notion of the SDK's localization mode.
+    var restTarget: MapTarget {
+        switch self {
+        case .map(let code, _): .map(code: code)
+        case .mapSet(let code, _): .mapSet(code: code)
+        case .objects(let codes): .map(code: codes.first ?? "")
+        }
+    }
+
+    var restLocalizationMode: MultiSetKit.LocalizationMode {
+        switch localizationMode {
+        case .singleFrame: .singleFrame
+        case .multiFrame: .multiFrame
+        @unknown default: .multiFrame
+        }
+    }
+}
+
+/// The hosted-experience runner: an experience opened from a QR code runs on the
+/// REST pose provider so the parent app behaves exactly like the App Clip, which
+/// cannot link the SDK at all.
 struct ExperienceRunner: View {
     let manifest: ExperienceManifest
     let onExit: () -> Void

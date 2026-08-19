@@ -65,13 +65,24 @@ public actor LiveMultiSetAPI: MultiSetAPI {
         )
     }
 
-    public func mintM2MCredentials(name: String) async throws -> M2MCredentials {
+    public func mintM2MCredentials(
+        name: String,
+        scopes: [M2MScope] = [.query]
+    ) async throws -> M2MCredentials {
+        // `clientName` and `scope` are both required. Sending `name`, or omitting
+        // the scope array, is rejected as a bad request.
         struct Payload: Encodable {
-            let name: String
+            let clientName: String
+            let scope: [String]
         }
-        let endpoint = try Endpoint.json(.post, "/v1/m2m", body: Payload(name: name))
+        let endpoint = try Endpoint.json(
+            .post, "/v1/m2m",
+            body: Payload(clientName: name, scope: scopes.map(\.rawValue))
+        )
         let client = try await authorized(endpoint, as: M2MClient.self, context: "SDK credentials")
-        guard let secret = client.clientSecret else {
+        guard let secret = client.clientSecret, !secret.isEmpty else {
+            // The secret is only ever returned at creation, so a response without
+            // one leaves nothing usable — better to say so than to store a blank.
             throw MultiSetError.decoding(context: "SDK credentials")
         }
         return M2MCredentials(clientId: client.clientId, clientSecret: secret)
@@ -80,7 +91,7 @@ public actor LiveMultiSetAPI: MultiSetAPI {
     public func m2mClients(page: Page = .first) async throws -> [M2MClient] {
         let endpoint = Endpoint.paged("/v1/m2m", page: page.index, limit: page.limit)
         return try await authorized(endpoint, as: M2MClientListPage.self, context: "SDK credentials")
-            .clients ?? []
+            .all
     }
 
     // MARK: - Library

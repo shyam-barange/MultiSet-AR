@@ -44,28 +44,42 @@ public struct M2MCredentials: Codable, Sendable, Equatable {
     }
 }
 
+/// Scopes an M2M client can hold. `query` is what localization and object tracking
+/// need; `write` is required to create or modify maps.
+public enum M2MScope: String, Codable, Sendable, CaseIterable {
+    case query
+    case write
+}
+
 public struct M2MClient: Codable, Sendable, Identifiable, Hashable {
-    public var id: String
+    /// `clientId` is the identity here. The creation response carries no `_id`, so
+    /// requiring one made every successful mint fail to decode.
+    public var id: String { clientId }
+
     public var clientId: String
-    /// Returned once at creation only. Never present when listing.
+    /// Returned once at creation only, never when listing. There is no way to
+    /// recover it later, so it has to be stored when it arrives.
     public var clientSecret: String?
-    public var name: String?
-    public var status: String?
+    public var clientName: String?
+    public var accountId: String?
+    public var scopes: [String]?
+    public var isActive: Bool?
     public var createdAt: Date?
 
     private enum CodingKeys: String, CodingKey {
-        case id = "_id"
-        case clientId, clientSecret, name, status, createdAt
+        case clientId, clientSecret, clientName, accountId, scopes, isActive, createdAt
     }
 }
 
 public struct M2MClientListPage: Codable, Sendable {
     public var clients: [M2MClient]?
+    public var m2mClients: [M2MClient]?
+    public var data: [M2MClient]?
     public var totalCount: Int?
 
-    private enum CodingKeys: String, CodingKey {
-        case clients, totalCount
-    }
+    /// The list endpoint's array key is undocumented, so all three spellings seen
+    /// in the wild are accepted rather than guessing one.
+    public var all: [M2MClient] { clients ?? m2mClients ?? data ?? [] }
 }
 
 public struct UserProfile: Codable, Sendable, Equatable {

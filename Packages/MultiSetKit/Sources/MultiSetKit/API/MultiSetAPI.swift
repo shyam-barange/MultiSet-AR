@@ -32,7 +32,7 @@ public protocol MultiSetAPI: Sendable {
     // Account
     func userProfile() async throws -> UserProfile
     func planDetails() async throws -> PlanDetails
-    func mintM2MCredentials(name: String) async throws -> M2MCredentials
+    func mintM2MCredentials(name: String, scopes: [M2MScope]) async throws -> M2MCredentials
     func m2mClients(page: Page) async throws -> [M2MClient]
 
     // Library
@@ -72,6 +72,14 @@ public protocol MultiSetAPI: Sendable {
 
     // Simulation
     func simulationDatasets(page: Page) async throws -> [SimulationDataset]
+}
+
+public extension MultiSetAPI {
+    /// Localization and object tracking only need `query`, so that is the default
+    /// rather than the broader `write` scope.
+    func mintM2MCredentials(name: String) async throws -> M2MCredentials {
+        try await mintM2MCredentials(name: name, scopes: [.query])
+    }
 }
 
 public struct ContentSpaceDraft: Sendable, Equatable {

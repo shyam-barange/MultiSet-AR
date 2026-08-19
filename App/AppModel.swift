@@ -2,6 +2,7 @@ import Combine
 import MultiSetKit
 import MultiSetUI
 import SwiftUI
+import UIKit
 
 /// Root state: who is signed in, which API to talk to, and where a deep link
 /// should land.
@@ -107,6 +108,9 @@ final class AppModel: ObservableObject {
         _ = try await auth.signIn(email: email, password: password)
         session = .signedIn(try await api.userProfile())
         await refreshSecretStorageWarning()
+        // Best effort at sign-in so the AR screens are ready without a round trip
+        // later. A failure here is not worth blocking sign-in over — the screens
+        // retry, and report the reason if it fails again.
         await ensureSDKCredentials()
         toast = MSToast(message: "Signed in", tone: .success)
     }
@@ -119,18 +123,26 @@ final class AppModel: ObservableObject {
     }
 
     /// Mints M2M credentials so the SDK can be initialised without the developer
-    /// typing a client ID. Failure is non-fatal: the REST provider needs no
-    /// credentials, so localization still works.
-    func ensureSDKCredentials() async {
-        if await auth.storedMachineCredentials != nil { return }
+    /// typing anything. A signed-in user already has everything needed to create
+    /// them, so this runs at sign-in and again on demand.
+    ///
+    /// Returns the reason on failure rather than swallowing it: the difference
+    /// between "not signed in", "the plan doesn't allow it", and "the network was
+    /// down" changes what the user should do next.
+    @discardableResult
+    func ensureSDKCredentials() async -> MultiSetError? {
+        if await auth.storedMachineCredentials != nil { return nil }
+        guard isSignedIn else { return .unauthorized }
         do {
-            let credentials = try await api.mintM2MCredentials(name: "MultiSet AR for iOS")
+            // Only the query scope: it is all localization and object tracking use.
+            let credentials = try await api.mintM2MCredentials(
+                name: "MultiSet AR on \(UIDevice.current.name)",
+                scopes: [.query]
+            )
             _ = try await auth.activateMachineCredentials(credentials)
+            return nil
         } catch {
-            secretStorageWarning = secretStorageWarning ?? """
-            Couldn't create SDK credentials for this device. Localization still \
-            works — it will use the REST provider instead of the SDK.
-            """
+            return error.asMultiSetError
         }
     }
 

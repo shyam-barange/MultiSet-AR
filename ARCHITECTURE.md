@@ -83,7 +83,34 @@ An earlier attempt drove the SDK from the app's own `ARView` with
 the SDK's ownership model; it has been removed.
 
 **The REST path stays** because the App Clip cannot link the SDK at all, for the
-reason below.
+reason below — and because it is the fallback when SDK credentials cannot be
+created.
+
+### Credentials for the SDK path
+
+`MultiSetConfig` takes a clientId and clientSecret and has no way to accept a
+bearer token, so a signed-in user's access token cannot drive the SDK directly.
+What it can do is *create* SDK credentials: a signed-in user already has the
+authority for `POST /v1/m2m`, so the app mints a query-scoped pair for itself at
+sign-in and again on demand. Nobody is ever asked to paste a client ID.
+
+Two shape errors made every mint fail, which is what produced the
+"SDK credentials needed" dead end:
+
+- The request sent `name` and no `scope`. Both `clientName` and `scope` are
+  required, so the server rejected it.
+- The response decoder required an `_id` that the 201 body does not contain, so
+  even a successful mint failed to decode.
+
+Both are now pinned by tests against the shapes in the API's own Postman
+collection, including the 201 status and the fact that a listed client never
+carries a secret — which is why an existing client cannot be reused.
+
+If minting genuinely cannot succeed — a plan that disallows it, for instance — the
+screen falls back to REST localization driven by the user's own access token rather
+than dead-ending, and says so. The mesh overlay is the one capability lost: the SDK
+renders it with a hand-written glTF parser and a Metal shader, which the REST path
+has no equivalent of and which is not worth reimplementing.
 
 ## The constraint that shapes everything
 
