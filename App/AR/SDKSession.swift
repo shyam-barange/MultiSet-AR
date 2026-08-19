@@ -60,6 +60,15 @@ final class SDKSession: NSObject, ObservableObject {
     // MARK: - Published state
 
     @Published private(set) var phase: Phase = .idle
+
+    /// True once `initialize` has run and the SDK holds an internal manager.
+    ///
+    /// `MultiSetARView` hands the SDK its AR session, mesh parent, object anchor and
+    /// gizmo handler from `makeUIView` — and every one of those forwards through
+    /// `internalManager?`, so they are silently dropped if the SDK is not initialized
+    /// yet. The view must therefore not exist until this is true. The SDK documents
+    /// the requirement on `MultiSetARView` itself.
+    @Published private(set) var isSDKInitialized = false
     @Published private(set) var isTrackingNormal = false
     @Published private(set) var lastResult: MultiSetSDK.LocalizationResult?
     @Published private(set) var mapMesh: MeshState = .none
@@ -143,6 +152,10 @@ final class SDKSession: NSObject, ObservableObject {
         config.imageQuality = settings.imageQuality
 
         MultiSet.shared.initialize(config: config.validated(), callback: self)
+        // initialize() creates the internal manager synchronously, so the AR view is
+        // safe to build from here on — authentication completing is a separate,
+        // later event.
+        isSDKInitialized = MultiSet.shared.isInitialized
         startPolling()
     }
 
@@ -155,6 +168,7 @@ final class SDKSession: NSObject, ObservableObject {
         if MultiSet.shared.isInitialized {
             MultiSet.shared.release()
         }
+        isSDKInitialized = false
         phase = .idle
         resetObservedState()
     }
@@ -215,6 +229,9 @@ final class SDKSession: NSObject, ObservableObject {
     func setGizmoVisible(_ visible: Bool) {
         MultiSet.shared.setGizmoVisible(visible)
     }
+
+    /// The frame count actually in force, after the SDK's own clamping.
+    var frameCount: Int { MultiSet.shared.config?.numberOfFrames ?? 4 }
 
     var sdkVersion: String { MultiSet.version }
     var activeBaseURL: String { MultiSet.shared.activeBaseURL }

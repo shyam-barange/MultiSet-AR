@@ -57,6 +57,18 @@ incompatible constraints.
 | **SDK path** | `MultiSetSDK` v1.15.0 via `MultiSetARView` | Test localization and Test tracking, from Map and Object Detail | Yes — the SDK downloads and renders it |
 | **REST path** | `MultiSetARCore`'s `RESTPoseProvider` | Hosted experiences, in the app *and* the App Clip | No |
 
+**The SDK must be initialized before `MultiSetARView` is built.** The view hands
+the SDK its AR session, mesh parent, object anchor and gizmo update handler from
+`makeUIView`, and every one of those forwards through `internalManager?` — so if
+the SDK is not initialized yet, all four are dropped in silence. The result is a
+camera preview that can never localize: no frames reach the SDK, and nothing moves
+the gizmo the mesh is parented to. The SDK documents the requirement on
+`MultiSetARView` itself.
+
+`SDKRunner` therefore owns the `SDKSession`, starts it once credentials resolve,
+and only builds the screen — and so the AR view — once `isSDKInitialized` is true.
+The screens assert it on appear, because the failure is otherwise invisible.
+
 **The SDK path lets the SDK own the AR session.** `MultiSetARView` installs the
 SDK's own `ARSession` delegate, creates the gizmo anchor that map meshes are
 parented to, adds a separate world-fixed anchor for object meshes, and adds

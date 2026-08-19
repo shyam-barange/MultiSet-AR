@@ -13,7 +13,12 @@ struct MapSetListView: View {
             emptyTitle: "No map sets yet",
             emptyMessage: "A map set stitches several maps into one coordinate system, so a whole building shares an origin."
         ) { mapSet in
-            MapSetRow(mapSet: mapSet)
+            NavigationLink {
+                MapSetDetailView(mapSet: mapSet)
+            } label: {
+                MapSetRow(mapSet: mapSet)
+            }
+            .buttonStyle(.plain)
         }
         .searchable(text: $list.searchText, prompt: "Search map sets")
         .onChange(of: list.searchText) { _ in list.searchChanged() }
@@ -57,30 +62,7 @@ struct MapSetRow: View {
                     Spacer(minLength: 0)
                 }
 
-                if let entries = mapSet.mapSetData, !entries.isEmpty {
-                    Divider().overlay(MSColor.borderSubtle)
-                    ForEach(entries) { entry in
-                        HStack(spacing: MSSpacing.sm) {
-                            Text("#\(entry.order ?? 0)")
-                                .font(MSFont.monoSmall)
-                                .foregroundStyle(MSColor.textMuted)
-                                .frame(width: 24, alignment: .leading)
-                            Text(entry.map?.mapName ?? "Unnamed map")
-                                .font(MSFont.caption)
-                                .foregroundStyle(MSColor.textSecondary)
-                                .lineLimit(1)
-                            Spacer(minLength: 0)
-                            if let pose = entry.relativePose {
-                                Text(String(
-                                    format: "%+.1f %+.1f %+.1f",
-                                    pose.position.x, pose.position.y, pose.position.z
-                                ))
-                                .font(MSFont.monoSmall)
-                                .foregroundStyle(MSColor.textMuted)
-                            }
-                        }
-                    }
-                }
+
             }
         }
         .accessibilityElement(children: .combine)

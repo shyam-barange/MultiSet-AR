@@ -10,19 +10,30 @@ import SwiftUI
 /// session — which is what makes the map mesh download and render on success.
 struct SDKLocalizationScreen: View {
     let target: SDKSession.Target
-    let credentials: M2MCredentials
-    let environment: APIEnvironment
-    var settings = SDKSettings()
+    let onRetry: () -> Void
     let onExit: () -> Void
 
-    @StateObject private var session = SDKSession()
+    @ObservedObject var session: SDKSession
     @State private var showsDiagnostics = true
     @State private var showsCloseConfirmation = false
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ZStack {
-            MultiSetARView().ignoresSafeArea()
+            // Guarded rather than trusted: MultiSetARView hands the SDK its session,
+            // mesh parent, object anchor and gizmo handler from makeUIView, and each
+            // of those forwards through an optional internal manager — so building
+            // this view before initialize() drops all four in silence, leaving the
+            // SDK with no frames and no way to move the mesh. The runner starts the
+            // session first; this makes a regression fail loudly instead.
+            MultiSetARView()
+                .ignoresSafeArea()
+                .onAppear {
+                    assert(
+                        session.isSDKInitialized,
+                        "MultiSetARView was built before MultiSet.initialize() — the SDK will receive no AR session"
+                    )
+                }
 
             switch session.phase {
             case .idle, .authenticating:
@@ -31,7 +42,7 @@ struct SDKLocalizationScreen: View {
                 SDKFailureOverlay(
                     title: "Couldn't start the session",
                     message: error,
-                    onRetry: start,
+                    onRetry: onRetry,
                     onExit: onExit
                 )
             case .ready:
@@ -48,8 +59,6 @@ struct SDKLocalizationScreen: View {
         .preferredColorScheme(.dark)
         .statusBarHidden()
         .msToast($session.toast)
-        .task { start() }
-        .onDisappear { session.stop() }
         .onChange(of: scenePhase) { phase in
             // The SDK's pose-consistency check trusts the session frame, and a
             // suspended ARSession may resume having moved, so it is told directly.
@@ -203,19 +212,11 @@ struct SDKLocalizationScreen: View {
 
     // MARK: - Derived
 
-    private func start() {
-        session.start(
-            target: target,
-            credentials: credentials,
-            environment: environment,
-            settings: settings
-        )
-    }
 
     private var captureStatus: String {
         switch target.localizationMode {
         case .singleFrame: "Capturing one frame"
-        case .multiFrame: "Capturing \(settings.frameCount) frames"
+        case .multiFrame: "Capturing \(session.frameCount) frames"
         // The SDK ships as a binary framework, so a future mode could appear
         // without this app being recompiled against it.
         @unknown default: "Capturing frames"

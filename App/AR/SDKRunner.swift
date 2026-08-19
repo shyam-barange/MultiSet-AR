@@ -25,6 +25,7 @@ struct SDKRunner: View {
     let onExit: () -> Void
 
     @EnvironmentObject private var model: AppModel
+    @StateObject private var session = SDKSession()
     @State private var credentials: M2MCredentials?
     @State private var resolution: Resolution = .resolving
 
@@ -47,31 +48,38 @@ struct SDKRunner: View {
             case .restFallback(let reason):
                 restFallback(reason: reason)
             case .ready:
-                if let credentials {
-                    session(with: credentials)
-                }
+                startedSession()
             }
         }
         .task { await resolveCredentials() }
+        .onDisappear { session.stop() }
     }
 
+    /// The AR view is only built once the SDK is initialized. `MultiSetARView` hands
+    /// the SDK its session, mesh parent, object anchor and gizmo handler from
+    /// `makeUIView`, and each of those is dropped if the SDK is not ready — so
+    /// rendering it too early leaves the SDK with no frames and nothing to move.
     @ViewBuilder
-    private func session(with credentials: M2MCredentials) -> some View {
-        switch mode {
-        case .localize(let target):
-            SDKLocalizationScreen(
-                target: target,
-                credentials: credentials,
-                environment: model.environment,
-                onExit: onExit
-            )
-        case .trackObjects(let codes):
-            SDKObjectTrackingScreen(
-                objectCodes: codes,
-                credentials: credentials,
-                environment: model.environment,
-                onExit: onExit
-            )
+    private func startedSession() -> some View {
+        if session.isSDKInitialized {
+            switch mode {
+            case .localize(let target):
+                SDKLocalizationScreen(
+                    target: target,
+                    onRetry: { Task { await restart() } },
+                    onExit: onExit,
+                    session: session
+                )
+            case .trackObjects(let codes):
+                SDKObjectTrackingScreen(
+                    objectCodes: codes,
+                    onRetry: { Task { await restart() } },
+                    onExit: onExit,
+                    session: session
+                )
+            }
+        } else {
+            loading
         }
     }
 
@@ -148,8 +156,7 @@ struct SDKRunner: View {
         resolution = .resolving
 
         if let stored = await model.auth.storedMachineCredentials {
-            credentials = stored
-            resolution = .ready
+            startSDK(with: stored)
             return
         }
 
@@ -166,11 +173,33 @@ struct SDKRunner: View {
         }
 
         if let stored = await model.auth.storedMachineCredentials {
-            credentials = stored
-            resolution = .ready
+            startSDK(with: stored)
         } else {
             resolution = .restFallback(reason: .decoding(context: "SDK credentials"))
         }
+    }
+
+    /// Initializes the SDK before anything renders `MultiSetARView`.
+    private func startSDK(with credentials: M2MCredentials) {
+        self.credentials = credentials
+        session.start(
+            target: sessionTarget,
+            credentials: credentials,
+            environment: model.environment
+        )
+        resolution = .ready
+    }
+
+    private var sessionTarget: SDKSession.Target {
+        switch mode {
+        case .localize(let target): target
+        case .trackObjects(let codes): .objects(codes: codes)
+        }
+    }
+
+    private func restart() async {
+        session.stop()
+        await resolveCredentials()
     }
 }
 

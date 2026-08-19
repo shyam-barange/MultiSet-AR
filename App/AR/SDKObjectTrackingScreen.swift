@@ -11,18 +11,29 @@ import SwiftUI
 /// map fix. The gizmo is hidden here because there is no map origin to show.
 struct SDKObjectTrackingScreen: View {
     let objectCodes: [String]
-    let credentials: M2MCredentials
-    let environment: APIEnvironment
-    var settings = SDKSettings()
+    let onRetry: () -> Void
     let onExit: () -> Void
 
-    @StateObject private var session = SDKSession()
+    @ObservedObject var session: SDKSession
     @State private var showsDiagnostics = true
     @State private var showsCloseConfirmation = false
 
     var body: some View {
         ZStack {
-            MultiSetARView().ignoresSafeArea()
+            // Guarded rather than trusted: MultiSetARView hands the SDK its session,
+            // mesh parent, object anchor and gizmo handler from makeUIView, and each
+            // of those forwards through an optional internal manager — so building
+            // this view before initialize() drops all four in silence, leaving the
+            // SDK with no frames and no way to move the mesh. The runner starts the
+            // session first; this makes a regression fail loudly instead.
+            MultiSetARView()
+                .ignoresSafeArea()
+                .onAppear {
+                    assert(
+                        session.isSDKInitialized,
+                        "MultiSetARView was built before MultiSet.initialize() — the SDK will receive no AR session"
+                    )
+                }
 
             switch session.phase {
             case .idle, .authenticating:
@@ -31,7 +42,7 @@ struct SDKObjectTrackingScreen: View {
                 SDKFailureOverlay(
                     title: "Couldn't start tracking",
                     message: error,
-                    onRetry: start,
+                    onRetry: onRetry,
                     onExit: onExit
                 )
             case .ready:
@@ -47,15 +58,11 @@ struct SDKObjectTrackingScreen: View {
         .statusBarHidden()
         .msToast($session.toast)
         .task {
-            start()
             // No map origin is involved in object tracking, so the localization
             // gizmo would only be a distraction.
             session.setGizmoVisible(false)
         }
-        .onDisappear {
-            session.setGizmoVisible(true)
-            session.stop()
-        }
+        .onDisappear { session.setGizmoVisible(true) }
         .alert("Tracking failed", isPresented: failureAlert) {
             Button("Try again") { session.startObjectTracking() }
             Button("OK", role: .cancel) {}
@@ -185,14 +192,6 @@ struct SDKObjectTrackingScreen: View {
         .accessibilityLabel(label)
     }
 
-    private func start() {
-        session.start(
-            target: .objects(codes: objectCodes),
-            credentials: credentials,
-            environment: environment,
-            settings: settings
-        )
-    }
 
     private var failureAlert: Binding<Bool> {
         Binding(
