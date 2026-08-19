@@ -1,12 +1,12 @@
 import MultiSetKit
-import MultiSetSDK
+import MultiSetVPS
 import MultiSetUI
 import SwiftUI
 
 /// Localization against one of the developer's own maps, driven by `MultiSetSDK`.
 ///
 /// This is the screen a developer standing in their own building uses to check that
-/// VPS places them where it should. It uses `MultiSetARView` so the SDK owns the AR
+/// VPS places them where it should. It uses `VPSARView` so the SDK owns the AR
 /// session — which is what makes the map mesh download and render on success.
 struct SDKLocalizationScreen: View {
     let target: SDKSession.Target
@@ -20,18 +20,18 @@ struct SDKLocalizationScreen: View {
 
     var body: some View {
         ZStack {
-            // Guarded rather than trusted: MultiSetARView hands the SDK its session,
+            // Guarded rather than trusted: VPSARView hands the SDK its session,
             // mesh parent, object anchor and gizmo handler from makeUIView, and each
             // of those forwards through an optional internal manager — so building
             // this view before initialize() drops all four in silence, leaving the
             // SDK with no frames and no way to move the mesh. The runner starts the
             // session first; this makes a regression fail loudly instead.
-            MultiSetARView()
+            VPSARView()
                 .ignoresSafeArea()
                 .onAppear {
                     assert(
                         session.isSDKInitialized,
-                        "MultiSetARView was built before MultiSet.initialize() — the SDK will receive no AR session"
+                        "VPSARView was built before MultiSet.initialize() — the SDK will receive no AR session"
                     )
                 }
 
@@ -63,7 +63,7 @@ struct SDKLocalizationScreen: View {
             // The SDK's pose-consistency check trusts the session frame, and a
             // suspended ARSession may resume having moved, so it is told directly.
             if phase != .active {
-                MultiSet.shared.stopLocalization()
+                VPSEngine.shared.stopLocalization()
             }
         }
         .alert("Localization failed", isPresented: failureAlert) {

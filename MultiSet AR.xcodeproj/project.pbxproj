@@ -14,7 +14,6 @@
 		2428F3A6CF38DB0A540D1D16 /* Assets.xcassets in app */ = {isa = PBXBuildFile; fileRef = 2910752274DB8F8E5BDD359C /* Assets.xcassets */; };
 		2AA1EA16CC1F9B1A0D6BC864 /* SDKRunner.swift in app */ = {isa = PBXBuildFile; fileRef = A96592507A88CF47CF9ED5A4 /* SDKRunner.swift */; };
 		2B7B8823208F8CC769A2061E /* QRScannerSheet.swift in app */ = {isa = PBXBuildFile; fileRef = 5EA1A5B0FECFBA131622DAC3 /* QRScannerSheet.swift */; };
-		2D5A4039995BD71C282762AC /* SDKCredentialsSheet.swift in app */ = {isa = PBXBuildFile; fileRef = 82797EF86AE85976A71A2600 /* SDKCredentialsSheet.swift */; };
 		35B2C95F787154D1912032A2 /* LibraryView.swift in app */ = {isa = PBXBuildFile; fileRef = 2047FE1D8E25EC3391396C24 /* LibraryView.swift */; };
 		377AAD9BAD82FFD0D51277DD /* MapSetDetailView.swift in app */ = {isa = PBXBuildFile; fileRef = 22D398D4362A853EC73C12BE /* MapSetDetailView.swift */; };
 		3D74A9A0DD7395AEB7F18266 /* PublishView.swift in app */ = {isa = PBXBuildFile; fileRef = C17F8A905B64FE1B66B48B8A /* PublishView.swift */; };
@@ -45,9 +44,10 @@
 		E7415B2C560B54604E6C915A /* RootView.swift in app */ = {isa = PBXBuildFile; fileRef = 1BF68FADE19102B313043C46 /* RootView.swift */; };
 		FFFCF91341581D602CCF5032 /* MapListView.swift in app */ = {isa = PBXBuildFile; fileRef = 9D8060E9D9F93DB0D73532B3 /* MapListView.swift */; };
 		0B12FBEEE9BD11D2891E50F5 /* MultiSetUI in clip */ = {isa = PBXBuildFile; productRef = E4EFEC51D23CA133B2BB5F4E /* MultiSetUI */; };
+		129AB4820A8416A2854573E4 /* MultiSetVPS in clip */ = {isa = PBXBuildFile; productRef = 4618F3242E53F195B7418A98 /* MultiSetVPS */; };
+		3B42C148A245DA76EFB7BF13 /* MultiSetVPS in app */ = {isa = PBXBuildFile; productRef = 7FF493690A5742DAD009C0DF /* MultiSetVPS */; };
 		6E65DC9BEF591CB6593DD574 /* MultiSetKit in app */ = {isa = PBXBuildFile; productRef = CBD44AE9BC67ED3EA5190D0D /* MultiSetKit */; };
 		821E3974A4928867253DC62E /* MultiSetARCore in clip */ = {isa = PBXBuildFile; productRef = 1064ECF73AE6194090E1AA9B /* MultiSetARCore */; };
-		8C09117215B07B3C4ADFE184 /* MultiSetSDKBinary in app */ = {isa = PBXBuildFile; productRef = 5E6453C791B27B8D811FD762 /* MultiSetSDKBinary */; };
 		CED05BC8F12E608665453BB7 /* MultiSetKit in clip */ = {isa = PBXBuildFile; productRef = 5834E7456808B30907ACE7BC /* MultiSetKit */; };
 		F07339E9F288E2083DA6B272 /* MultiSetUI in app */ = {isa = PBXBuildFile; productRef = F576D0CF33A16C48524A8182 /* MultiSetUI */; };
 		F1E9DCEEFF2F262873EA2C5F /* MultiSetARCore in app */ = {isa = PBXBuildFile; productRef = 8EFCEF276F7BC6E045C92F3D /* MultiSetARCore */; };
@@ -79,7 +79,6 @@
 		7B868F32C44966E3ADEC2B34 /* SDKSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDKSession.swift"; sourceTree = "<group>"; };
 		7E341DE8B84FFBFE898D5A80 /* ExperienceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExperienceDetailView.swift"; sourceTree = "<group>"; };
 		7F7F7EBF2BF583125FA3B233 /* MultiSetARApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MultiSetARApp.swift"; sourceTree = "<group>"; };
-		82797EF86AE85976A71A2600 /* SDKCredentialsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDKCredentialsSheet.swift"; sourceTree = "<group>"; };
 		8323649DE689A8585A141A66 /* MultiSetARClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "MultiSetARClip.entitlements"; sourceTree = "<group>"; };
 		8440866A12C9D5DC2B9DEED4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView.swift"; sourceTree = "<group>"; };
 		8611612BACA1836759DC6079 /* ClipModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClipModel.swift"; sourceTree = "<group>"; };
@@ -190,7 +189,6 @@
 		7053FC6DDBF5EF934068566B /* Auth */ = {
 			isa = PBXGroup;
 			children = (
-				82797EF86AE85976A71A2600 /* SDKCredentialsSheet.swift */,
 				DD5AF5F65D9FD61B2B7AD76D /* SignInView.swift */,
 			);
 			path = "Auth";
@@ -306,7 +304,7 @@
 				6E65DC9BEF591CB6593DD574 /* MultiSetKit */,
 				F07339E9F288E2083DA6B272 /* MultiSetUI */,
 				F1E9DCEEFF2F262873EA2C5F /* MultiSetARCore */,
-				8C09117215B07B3C4ADFE184 /* MultiSetSDKBinary */,
+				3B42C148A245DA76EFB7BF13 /* MultiSetVPS */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +315,7 @@
 				CED05BC8F12E608665453BB7 /* MultiSetKit */,
 				0B12FBEEE9BD11D2891E50F5 /* MultiSetUI */,
 				821E3974A4928867253DC62E /* MultiSetARCore */,
+				129AB4820A8416A2854573E4 /* MultiSetVPS */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,7 +332,6 @@
 				2AA1EA16CC1F9B1A0D6BC864 /* SDKRunner.swift */,
 				9ACD79839923E19E0BE66F27 /* SDKSession.swift */,
 				1FFDAA0FC46C71B527B64E9A /* AppModel.swift */,
-				2D5A4039995BD71C282762AC /* SDKCredentialsSheet.swift */,
 				50DE9531FBC83DC549BEB85C /* SignInView.swift */,
 				A1891ACC94D0A03C44BA08F5 /* DemoKind.swift */,
 				5931443F7263A001472E4255 /* DemoRunnerView.swift */,
@@ -509,13 +507,13 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "Packages/MultiSetUI";
 		};
-		9E1B07A55EC306DC05B42061 /* XCLocalSwiftPackageReference "Vendor" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "Vendor";
-		};
 		A6B2330B6E2AE93CFF181503 /* XCLocalSwiftPackageReference "Packages/MultiSetKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "Packages/MultiSetKit";
+		};
+		DBD47F60990E3350BC186789 /* XCLocalSwiftPackageReference "Packages/MultiSetVPS" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "Packages/MultiSetVPS";
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -524,13 +522,17 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = MultiSetARCore;
 		};
+		4618F3242E53F195B7418A98 /* MultiSetVPS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MultiSetVPS;
+		};
 		5834E7456808B30907ACE7BC /* MultiSetKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MultiSetKit;
 		};
-		5E6453C791B27B8D811FD762 /* MultiSetSDKBinary */ = {
+		7FF493690A5742DAD009C0DF /* MultiSetVPS */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = MultiSetSDKBinary;
+			productName = MultiSetVPS;
 		};
 		8EFCEF276F7BC6E045C92F3D /* MultiSetARCore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -570,7 +572,7 @@
 				CBD44AE9BC67ED3EA5190D0D /* MultiSetKit */,
 				F576D0CF33A16C48524A8182 /* MultiSetUI */,
 				8EFCEF276F7BC6E045C92F3D /* MultiSetARCore */,
-				5E6453C791B27B8D811FD762 /* MultiSetSDKBinary */,
+				7FF493690A5742DAD009C0DF /* MultiSetVPS */,
 			);
 			productName = "MultiSet AR";
 			productReference = 19163E4DB25873B65B6F241E /* MultiSet AR.app */;
@@ -593,6 +595,7 @@
 				5834E7456808B30907ACE7BC /* MultiSetKit */,
 				E4EFEC51D23CA133B2BB5F4E /* MultiSetUI */,
 				1064ECF73AE6194090E1AA9B /* MultiSetARCore */,
+				4618F3242E53F195B7418A98 /* MultiSetVPS */,
 			);
 			productName = "MultiSet AR Clip";
 			productReference = F06557B78455BF326B33B8BB /* MultiSet AR Clip.app */;
@@ -629,7 +632,7 @@
 				A6B2330B6E2AE93CFF181503 /* XCLocalSwiftPackageReference "Packages/MultiSetKit" */,
 				371F91280D3499FD1352960C /* XCLocalSwiftPackageReference "Packages/MultiSetUI" */,
 				135E5E641E3A1AFBCA672BE1 /* XCLocalSwiftPackageReference "Packages/MultiSetARCore" */,
-				9E1B07A55EC306DC05B42061 /* XCLocalSwiftPackageReference "Vendor" */,
+				DBD47F60990E3350BC186789 /* XCLocalSwiftPackageReference "Packages/MultiSetVPS" */,
 			);
 			productRefGroup = EC838BF479392FA8C7D80DC4 /* Products */;
 			projectDirPath = "";

@@ -6,7 +6,3 @@ ENABLE_PREVIEWS = YES
 GENERATE_INFOPLIST_FILE = NO
 SWIFT_EMIT_LOC_STRINGS = YES
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
-
-// MultiSetSDK.xcframework lives here. Deliberately absent from Clip.xcconfig:
-// the Clip must not be able to resolve the module even by accident.
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(SRCROOT)/Vendor

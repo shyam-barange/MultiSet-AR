@@ -103,8 +103,8 @@ fi
 
 if [ "$STATUS" -eq 0 ]; then
     echo "App Clip credential check passed:"
-    echo "  · MultiSetSDK is not linked, embedded, or referenced"
-    echo "  · no MultiSetConfig in the binary"
+    echo "  · no MultiSetSDK framework linked, embedded, or referenced"
+    echo "  · no credential-bound config type in the binary"
     echo "  · /v1/m2m/token and /v1/auth/login are unreachable"
     echo "  · no baked-in tokens, and no credentials in resources"
 fi

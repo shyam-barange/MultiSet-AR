@@ -1,5 +1,5 @@
 import MultiSetKit
-import MultiSetSDK
+import MultiSetVPS
 import MultiSetUI
 import SwiftUI
 
@@ -20,18 +20,18 @@ struct SDKObjectTrackingScreen: View {
 
     var body: some View {
         ZStack {
-            // Guarded rather than trusted: MultiSetARView hands the SDK its session,
+            // Guarded rather than trusted: VPSARView hands the SDK its session,
             // mesh parent, object anchor and gizmo handler from makeUIView, and each
             // of those forwards through an optional internal manager — so building
             // this view before initialize() drops all four in silence, leaving the
             // SDK with no frames and no way to move the mesh. The runner starts the
             // session first; this makes a regression fail loudly instead.
-            MultiSetARView()
+            VPSARView()
                 .ignoresSafeArea()
                 .onAppear {
                     assert(
                         session.isSDKInitialized,
-                        "MultiSetARView was built before MultiSet.initialize() — the SDK will receive no AR session"
+                        "VPSARView was built before MultiSet.initialize() — the SDK will receive no AR session"
                     )
                 }
 

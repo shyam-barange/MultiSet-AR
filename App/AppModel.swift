@@ -108,10 +108,6 @@ final class AppModel: ObservableObject {
         _ = try await auth.signIn(email: email, password: password)
         session = .signedIn(try await api.userProfile())
         await refreshSecretStorageWarning()
-        // Best effort at sign-in so the AR screens are ready without a round trip
-        // later. A failure here is not worth blocking sign-in over — the screens
-        // retry, and report the reason if it fails again.
-        await ensureSDKCredentials()
         toast = MSToast(message: "Signed in", tone: .success)
     }
 
@@ -120,30 +116,6 @@ final class AppModel: ObservableObject {
         session = .signedOut
         selectedTab = .home
         toast = MSToast(message: "Signed out", tone: .info)
-    }
-
-    /// Mints M2M credentials so the SDK can be initialised without the developer
-    /// typing anything. A signed-in user already has everything needed to create
-    /// them, so this runs at sign-in and again on demand.
-    ///
-    /// Returns the reason on failure rather than swallowing it: the difference
-    /// between "not signed in", "the plan doesn't allow it", and "the network was
-    /// down" changes what the user should do next.
-    @discardableResult
-    func ensureSDKCredentials() async -> MultiSetError? {
-        if await auth.storedMachineCredentials != nil { return nil }
-        guard isSignedIn else { return .unauthorized }
-        do {
-            // Only the query scope: it is all localization and object tracking use.
-            let credentials = try await api.mintM2MCredentials(
-                name: "MultiSet AR on \(UIDevice.current.name)",
-                scopes: [.query]
-            )
-            _ = try await auth.activateMachineCredentials(credentials)
-            return nil
-        } catch {
-            return error.asMultiSetError
-        }
     }
 
     private func refreshSecretStorageWarning() async {

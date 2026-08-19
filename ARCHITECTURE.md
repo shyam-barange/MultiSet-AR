@@ -49,95 +49,69 @@ The prefix lives once, in `Config/Shared.xcconfig` as
 
 ## Two AR paths, and why
 
-The app has two ways to run an AR session, because the two audiences have
-incompatible constraints.
-
 | | Driven by | Used for | Mesh overlay |
 |---|---|---|---|
-| **SDK path** | `MultiSetSDK` v1.15.0 via `MultiSetARView` | Test localization and Test tracking, from Map and Object Detail | Yes — the SDK downloads and renders it |
+| **Engine path** | `MultiSetVPS` — the SDK's own implementation, ported | Test localization and Test tracking, from Map, Map Set and Object Detail | Yes |
 | **REST path** | `MultiSetARCore`'s `RESTPoseProvider` | Hosted experiences, in the app *and* the App Clip | No |
 
-**The SDK must be initialized before `MultiSetARView` is built.** The view hands
-the SDK its AR session, mesh parent, object anchor and gizmo update handler from
-`makeUIView`, and every one of those forwards through `internalManager?` — so if
-the SDK is not initialized yet, all four are dropped in silence. The result is a
-camera preview that can never localize: no frames reach the SDK, and nothing moves
-the gizmo the mesh is parented to. The SDK documents the requirement on
-`MultiSetARView` itself.
+### `MultiSetVPS`: the SDK, ported to run on a bearer token
 
-`SDKRunner` therefore owns the `SDKSession`, starts it once credentials resolve,
-and only builds the screen — and so the AR view — once `isSDKInitialized` is true.
-The screens assert it on appear, because the failure is otherwise invisible.
+`MultiSetConfig` in the shipped framework takes a `clientId` and `clientSecret` and
+has no way to accept a token, so the SDK could only ever run as an M2M client. But
+nothing *below* its `AuthManager` needed those credentials: the token appears in
+exactly eight places, as `Bearer <token>`. `AuthManager` was the only
+credential-bound part of the whole SDK.
 
-**The SDK path lets the SDK own the AR session.** `MultiSetARView` installs the
-SDK's own `ARSession` delegate, creates the gizmo anchor that map meshes are
-parented to, adds a separate world-fixed anchor for object meshes, and adds
-lighting. The mesh pipeline only works if the SDK sets the scene up itself, so
-these screens embed `MultiSetARView` rather than the app's own `ARSceneHost`.
+So the engine is ported from `iOS-SDK-Internal/MultiSetSDK` with that one seam
+replaced by `VPSTokenProviding`. Everything else — `LocalizationManager`,
+`ObjectTrackingManager`, `PoseConsistencyGate`, the glTF parser, both Metal shaders,
+the reveal animator, the outline renderer — is the SDK's own code.
 
-With `meshVisualization` on, the SDK does the whole mesh pipeline internally:
-`GET /v1/vps/map/{mapCode}` for the mesh link, `GET /v1/file?key=` for a signed
-URL, GLB download with an on-disk cache, then render under the gizmo anchor with a
-reveal animation — and for a MapSet, applying the localized map's `relativePose`.
-Object tracking does the same through `objectMesh.meshLink` and renders an outline
-traced along the real object's silhouette. The app subscribes to `onMeshLoaded` and
-`onObjectMeshLoaded` and reports mesh state in the HUD separately from fix state,
-because a fix can succeed while the mesh is still downloading.
+That single change is what makes the flows work for a signed-in user:
 
-v1.15.0 also brings pose-consistency checking. When the server returns a pose that
-contradicts the device's own motion by more than `poseConsistencyThreshold`, the SDK
-discards it and calls `onLocalizationFalsePositive` instead of success or failure —
-nothing in the scene moves. That is surfaced as its own state, since treating it as
-a failure would be wrong: the request succeeded.
+- **The app** authenticates as the signed-in user, via `AuthStore`. No M2M
+  credentials, nothing to mint, nothing to paste.
+- **The App Clip** can run the same engine on its anonymous experience token, mesh
+  overlay included — a capability the REST path never had.
 
-An earlier attempt drove the SDK from the app's own `ARView` with
-`meshVisualization` off. That could never render a mesh and was the wrong shape for
-the SDK's ownership model; it has been removed.
+`VPSConfig` has no credential properties at all, so a secret cannot reach the engine
+or the Clip by construction rather than by discipline.
 
-**The REST path stays** because the App Clip cannot link the SDK at all, for the
-reason below — and because it is the fallback when SDK credentials cannot be
-created.
+A token is refreshed before every localization and tracking run, not once at setup.
+A user access token lasts 30 minutes while a session with background
+re-localization can run far longer; `AuthStore` refreshes from the refresh token,
+single-flighted so concurrent requests cannot race a rotating one.
 
-### Credentials for the SDK path
+The vendored `MultiSetSDK.xcframework` is gone — nothing links it now.
 
-`MultiSetConfig` takes a clientId and clientSecret and has no way to accept a
-bearer token, so a signed-in user's access token cannot drive the SDK directly.
-What it can do is *create* SDK credentials: a signed-in user already has the
-authority for `POST /v1/m2m`, so the app mints a query-scoped pair for itself at
-sign-in and again on demand. Nobody is ever asked to paste a client ID.
+**The engine must be initialized before `VPSARView` is built.** The view hands it
+the AR session, mesh parent, object anchor and gizmo update handler from
+`makeUIView`, and each forwards through an optional internal manager — so building
+the view first drops all four in silence, leaving a camera preview that can never
+localize. `SDKRunner` starts the session before rendering the screen, and the
+screens assert it on appear.
 
-Two shape errors made every mint fail, which is what produced the
-"SDK credentials needed" dead end:
+**Shaders load from `Bundle.module`, not `Bundle(for:)`.** In a statically linked
+package the latter resolves to the app bundle, where there is no `default.metallib`
+— the load fails, the renderer falls back to a plain material, and the reveal and
+outline effects are silently lost. A test asserts all three shader functions load.
 
-- The request sent `name` and no `scope`. Both `clientName` and `scope` are
-  required, so the server rejected it.
-- The response decoder required an `_id` that the 201 body does not contain, so
-  even a successful mint failed to decode.
+### What the mesh pipeline does
 
-Both are now pinned by tests against the shapes in the API's own Postman
-collection, including the 201 status and the fact that a listed client never
-carries a secret — which is why an existing client cannot be reused.
+On a successful fix, with `meshVisualization` on: `GET /v1/vps/map/{mapCode}` for
+the mesh link, `GET /v1/file?key=` for a signed URL, GLB download with an on-disk
+cache, parse through the engine's own glTF reader, then render under the gizmo
+anchor with a radial reveal — and for a map set, applying the localized map's
+`relativePose`. Object tracking does the same through `objectMesh.meshLink` and
+renders an outline traced along the real object's silhouette, parented to a
+world-fixed anchor rather than the gizmo. Mesh state is reported in the HUD
+separately from fix state, because a fix can succeed while the mesh is still
+downloading.
 
-If minting cannot succeed — a plan that disallows it, for instance — the screen
-says so, shows the server's own message, and offers the three things that can be
-done about it: enter a pair from the developer portal, retry, or continue without
-the SDK.
-
-An earlier version instead switched to REST localization silently. That was wrong
-twice over: it presented a different AR engine, with a different interface and no
-mesh overlay, as though it were the thing the user asked for; and it hid a fixable
-credential failure behind a worse experience. Continuing without the SDK is now
-only ever a deliberate choice.
-
-Manual entry is validated by exchanging the pair for a token, so a typo is caught
-at the sheet rather than surfacing later as a failed AR session. The scanner shares
-`M2MCredentials.parse(scannedPayload:)` with the experience scanner, which is why
-it rejects anything containing `://` — a URL splits on the scheme's colon into two
-plausible-looking halves, so scanning an experience QR would otherwise be stored as
-a credential pair.
-
-Settings shows whether SDK credentials exist, so this is fixable before a session
-fails rather than during one.
+v1.15.0's pose-consistency check is included: a server pose contradicting the
+device's own motion by more than `poseConsistencyThreshold` is discarded via
+`onLocalizationFalsePositive` rather than applied. That is surfaced as its own
+state, since the request succeeded and nothing in the scene moved.
 
 ## The constraint that shapes everything
 

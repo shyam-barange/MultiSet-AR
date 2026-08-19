@@ -1,7 +1,7 @@
 import ARKit
 import Combine
 import MultiSetKit
-import MultiSetSDK
+import MultiSetVPS
 import MultiSetUI
 import SwiftUI
 
@@ -14,7 +14,7 @@ import SwiftUI
 /// pipeline only works if the SDK is allowed to set the scene up itself. That is
 /// why these screens use `MultiSetARView` rather than the app's own `ARSceneHost`.
 ///
-/// `MultiSet.shared` is a singleton that refuses a second `initialize`, so a
+/// `VPSEngine.shared` is a singleton that refuses a second `initialize`, so a
 /// session must be released before another map or object can be configured.
 @MainActor
 final class SDKSession: NSObject, ObservableObject {
@@ -38,11 +38,11 @@ final class SDKSession: NSObject, ObservableObject {
     /// What the session is configured to do. Localization and object tracking are
     /// separate because the SDK validates a different part of the config for each.
     enum Target: Equatable {
-        case map(code: String, mode: MultiSetSDK.LocalizationMode)
-        case mapSet(code: String, mode: MultiSetSDK.LocalizationMode)
+        case map(code: String, mode: MultiSetVPS.LocalizationMode)
+        case mapSet(code: String, mode: MultiSetVPS.LocalizationMode)
         case objects(codes: [String])
 
-        var localizationMode: MultiSetSDK.LocalizationMode {
+        var localizationMode: MultiSetVPS.LocalizationMode {
             switch self {
             case .map(_, let mode), .mapSet(_, let mode): mode
             case .objects: .singleFrame
@@ -70,7 +70,7 @@ final class SDKSession: NSObject, ObservableObject {
     /// the requirement on `MultiSetARView` itself.
     @Published private(set) var isSDKInitialized = false
     @Published private(set) var isTrackingNormal = false
-    @Published private(set) var lastResult: MultiSetSDK.LocalizationResult?
+    @Published private(set) var lastResult: MultiSetVPS.LocalizationResult?
     @Published private(set) var mapMesh: MeshState = .none
     @Published private(set) var objectMesh: MeshState = .none
     @Published private(set) var trackedObjectCode: String?
@@ -102,10 +102,10 @@ final class SDKSession: NSObject, ObservableObject {
     // MARK: - Lifecycle
 
     /// Configures and authenticates the SDK. Releases any previous session first,
-    /// because `MultiSet.shared.initialize` is a no-op while already initialized.
+    /// because `VPSEngine.shared.initialize` is a no-op while already initialized.
     func start(
         target: Target,
-        credentials: M2MCredentials,
+        tokenProvider: any VPSTokenProviding,
         environment: APIEnvironment,
         settings: SDKSettings = .init()
     ) {
@@ -114,11 +114,9 @@ final class SDKSession: NSObject, ObservableObject {
         self.target = target
         phase = .authenticating
 
-        var config = MultiSetConfig(
-            clientId: credentials.clientId,
-            clientSecret: credentials.clientSecret,
-            baseURL: Self.sdkBaseURL(for: environment)
-        )
+        // No credentials here. The engine asks `tokenProvider` for a bearer token,
+        // so it runs as whoever the app is already signed in as.
+        var config = VPSConfig(baseURL: Self.sdkBaseURL(for: environment))
 
         switch target {
         case .map(let code, let mode):
@@ -151,22 +149,26 @@ final class SDKSession: NSObject, ObservableObject {
         config.geoCoordinatesInResponse = settings.passGeoPose
         config.imageQuality = settings.imageQuality
 
-        MultiSet.shared.initialize(config: config.validated(), callback: self)
+        VPSEngine.shared.initialize(
+            config: config.validated(),
+            callback: self,
+            tokenProvider: tokenProvider
+        )
         // initialize() creates the internal manager synchronously, so the AR view is
         // safe to build from here on — authentication completing is a separate,
         // later event.
-        isSDKInitialized = MultiSet.shared.isInitialized
+        isSDKInitialized = VPSEngine.shared.isInitialized
         startPolling()
     }
 
     func stop() {
         pollTask?.cancel()
         pollTask = nil
-        MultiSet.shared.stopLocalization()
-        MultiSet.shared.stopObjectTracking()
-        MultiSet.shared.stopGpsUpdates()
-        if MultiSet.shared.isInitialized {
-            MultiSet.shared.release()
+        VPSEngine.shared.stopLocalization()
+        VPSEngine.shared.stopObjectTracking()
+        VPSEngine.shared.stopGpsUpdates()
+        if VPSEngine.shared.isInitialized {
+            VPSEngine.shared.release()
         }
         isSDKInitialized = false
         phase = .idle
@@ -184,7 +186,7 @@ final class SDKSession: NSObject, ObservableObject {
         if case .none = mapMesh {
             mapMesh = .loading
         }
-        MultiSet.shared.localize()
+        VPSEngine.shared.localize()
     }
 
     func startObjectTracking() {
@@ -192,15 +194,15 @@ final class SDKSession: NSObject, ObservableObject {
         queryStartedAt = ContinuousClock.now
         queryCount += 1
         failureMessage = nil
-        MultiSet.shared.startObjectTracking()
+        VPSEngine.shared.startObjectTracking()
     }
 
     /// Discards the current fix and the pose the false-positive check measures
     /// against, so the next response is trusted as the new reference.
     func resetWorldOrigin() {
-        MultiSet.shared.stopLocalization()
-        MultiSet.shared.clearMesh()
-        MultiSet.shared.resetPoseConsistencyReference()
+        VPSEngine.shared.stopLocalization()
+        VPSEngine.shared.clearMesh()
+        VPSEngine.shared.resetPoseConsistencyReference()
         lastResult = nil
         mapMesh = .none
         falsePositive = nil
@@ -209,8 +211,8 @@ final class SDKSession: NSObject, ObservableObject {
     }
 
     func resetObjectTracking() {
-        MultiSet.shared.stopObjectTracking()
-        MultiSet.shared.clearObjectMeshes()
+        VPSEngine.shared.stopObjectTracking()
+        VPSEngine.shared.clearObjectMeshes()
         trackedObjectCode = nil
         trackedObjectConfidence = nil
         objectMesh = .none
@@ -227,14 +229,14 @@ final class SDKSession: NSObject, ObservableObject {
     }
 
     func setGizmoVisible(_ visible: Bool) {
-        MultiSet.shared.setGizmoVisible(visible)
+        VPSEngine.shared.setGizmoVisible(visible)
     }
 
     /// The frame count actually in force, after the SDK's own clamping.
-    var frameCount: Int { MultiSet.shared.config?.numberOfFrames ?? 4 }
+    var frameCount: Int { VPSEngine.shared.config?.numberOfFrames ?? 4 }
 
-    var sdkVersion: String { MultiSet.version }
-    var activeBaseURL: String { MultiSet.shared.activeBaseURL }
+    var sdkVersion: String { VPSEngine.version }
+    var activeBaseURL: String { VPSEngine.shared.activeBaseURL }
     var targetCode: String { target?.displayCode ?? "—" }
 
     /// The pose readout's view of the session.
@@ -255,7 +257,7 @@ final class SDKSession: NSObject, ObservableObject {
 
     // MARK: - Private
 
-    /// The SDK's base URL includes the version path, unlike `APIEnvironment`.
+    /// The engine's base URL includes the version path, unlike `APIEnvironment`.
     static func sdkBaseURL(for environment: APIEnvironment) -> String {
         environment.baseURL.appendingPathComponent("v1").absoluteString
     }
@@ -268,12 +270,12 @@ final class SDKSession: NSObject, ObservableObject {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .milliseconds(100))
                 guard let self else { return }
-                self.isLocalizing = MultiSet.shared.isLocalizing
-                self.isShowingOverlay = MultiSet.shared.isShowingOverlay
-                self.isCapturingFrames = MultiSet.shared.isCapturingFrames
-                self.hasLocalized = MultiSet.shared.hasLocalized
-                self.isObjectTrackingActive = MultiSet.shared.isObjectTrackingActive
-                self.hasTrackedObject = MultiSet.shared.hasTrackedObject
+                self.isLocalizing = VPSEngine.shared.isLocalizing
+                self.isShowingOverlay = VPSEngine.shared.isShowingOverlay
+                self.isCapturingFrames = VPSEngine.shared.isCapturingFrames
+                self.hasLocalized = VPSEngine.shared.hasLocalized
+                self.isObjectTrackingActive = VPSEngine.shared.isObjectTrackingActive
+                self.hasTrackedObject = VPSEngine.shared.hasTrackedObject
             }
         }
     }
@@ -322,9 +324,9 @@ struct SDKSettings: Equatable {
     var imageQuality = 90
 }
 
-// MARK: - MultiSetCallback
+// MARK: - VPSCallback
 
-extension SDKSession: MultiSetCallback {
+extension SDKSession: VPSCallback {
     nonisolated func onSDKReady() {}
 
     nonisolated func onAuthenticationSuccess() {
@@ -339,7 +341,7 @@ extension SDKSession: MultiSetCallback {
         }
     }
 
-    nonisolated func onLocalizationSuccess(result: MultiSetSDK.LocalizationResult) {
+    nonisolated func onLocalizationSuccess(result: MultiSetVPS.LocalizationResult) {
         Task { @MainActor in
             recordLatency()
             lastResult = result
@@ -372,7 +374,7 @@ extension SDKSession: MultiSetCallback {
         }
     }
 
-    nonisolated func onTrackingStateChanged(state: MultiSetSDK.TrackingState) {
+    nonisolated func onTrackingStateChanged(state: MultiSetVPS.TrackingState) {
         Task { @MainActor in
             isTrackingNormal = state == .tracking
         }

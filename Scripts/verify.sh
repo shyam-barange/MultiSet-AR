@@ -29,7 +29,7 @@ section "Package tests"
 # Run from each package directory: the scheme names only resolve against the
 # package, not against the app project at the repo root.
 FAILED=0
-for package in MultiSetUI MultiSetKit MultiSetARCore; do
+for package in MultiSetUI MultiSetKit MultiSetARCore MultiSetVPS; do
     echo "--- $package"
     if ! ( cd "Packages/$package" && xcodebuild test -scheme "$package" \
             -destination "id=$SIM_ID" -derivedDataPath "$DERIVED" 2>&1 \

@@ -18,11 +18,11 @@ PROJECT_NAME = "MultiSet AR"
 # Package products the two targets link. The Clip deliberately omits nothing
 # here — it is MultiSetSDK.xcframework that it must not link, and that is
 # attached to the app target only, further down.
-LOCAL_PACKAGES = ["MultiSetKit", "MultiSetUI", "MultiSetARCore"]
+LOCAL_PACKAGES = ["MultiSetKit", "MultiSetUI", "MultiSetARCore", "MultiSetVPS"]
 
-# Packages the app target links but the Clip must not. MultiSetSDKBinary wraps
-# MultiSetSDK.xcframework, which requires a clientId and clientSecret.
-APP_ONLY_PACKAGES = {"MultiSetSDKBinary": "Vendor"}
+# Nothing is app-only any more: the VPS engine is a source package driven by a
+# bearer token, so the Clip can link exactly what the app does.
+APP_ONLY_PACKAGES: dict[str, str] = {}
 
 _used_ids = set()
 

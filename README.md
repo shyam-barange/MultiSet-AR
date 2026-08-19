@@ -62,17 +62,19 @@ App/            com.multiset.sdk — the full app, and the only target that link
 Clip/           com.multiset.sdk.Clip — a launcher with three screens
 Packages/
   MultiSetKit     API client, models, auth, keychain, deep links
+  MultiSetVPS     the MultiSet VPS engine, ported to run on a bearer token
   MultiSetARCore  pose providers, AR session engine, nav, procedural rendering, AR views
   MultiSetUI      design tokens and shared components
-Vendor/         MultiSetSDK.xcframework as a SwiftPM binary target
 Scripts/        project generation, icon generation, CI gates, verify
 ```
 
-`MultiSetARCore` has no dependency on `MultiSetSDK`. The SDK requires a
-`clientId` and `clientSecret`, and the Clip runs for anonymous strangers, so the
-SDK-backed `PoseProvider` lives in the app target — keeping the framework off the
-Clip's dependency graph by construction rather than by convention. See
-[ARCHITECTURE.md](ARCHITECTURE.md).
+`MultiSetVPS` is the MultiSet SDK's own implementation, ported so its single
+credential-bound seam — the `AuthManager` that exchanged a clientId and secret for a
+token — is replaced by a token provider. Everything below it only ever needed a
+bearer token, so localization, object tracking and the mesh overlay all run on the
+signed-in user's access token, and on the App Clip's anonymous experience token.
+`VPSConfig` has no credential properties, so a secret cannot reach the Clip by
+construction. See [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Documents
 
