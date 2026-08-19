@@ -33,14 +33,14 @@ One rule, so a reference never resolves against the wrong bundle:
 
 | Kind | Catalog | Bundle | Referenced from |
 |---|---|---|---|
-| Onboarding, Learn imagery | `App/Resources/Assets.xcassets/{Onboarding,Learn}/` | app target | `App/Features/` only |
+| Home, Onboarding, Learn imagery | `App/Resources/Assets.xcassets/{Home,Onboarding,Learn}/` | app target | `App/Features/` only |
 | State illustrations | `Packages/MultiSetUI/…/Resources/StateArt.xcassets` | `Bundle.module` | anywhere, incl. the Clip |
 | App icon | both targets' `AppIcon.appiconset` | app + Clip | — |
 
 Assets in a target are invisible to views defined in a package, so anything both
 the app and the Clip render has to live in `MultiSetUI`. Everything is reached
 through the typed accessors in
-`MultiSetUI/Tokens/AssetCatalog.swift` — `OnboardingImage`, `LearnImage`,
+`MultiSetUI/Tokens/AssetCatalog.swift` — `HomeImage`, `OnboardingImage`, `LearnImage`,
 `StateArt` — never by string. `AssetCatalogTests` iterates every case and asserts
 it loads, which catches a rename or a missing target membership at test time
 instead of as a blank rectangle in a demo.
@@ -55,9 +55,10 @@ Produced to the direction in `Assets/multiset-ar-asset-production-brief.md`.
 
 | | |
 |---|---|
+| Home | 1536×1024 · `home-spatial-hero` |
 | Onboarding | 1290² · `onboarding-01-map`, `-02-localize`, `-03-guide` |
 | Learn | 1600×1000 · `learn-vps`, `-object-tracking`, `-mapping`, `-e57`, `-3dgs`, `-360` |
-| Format | HEIC, single scale, light in **Any** + dark in **Dark** on one image set |
+| Format | HEIC, single scale. Home uses one adaptable composition; Onboarding and Learn use light in **Any** + dark in **Dark** on one image set. |
 | Clip card header | `ProductionAssets/Optimized/Clip/clip-card-header.heic`, 3000×2000. **App Store Connect upload, never bundled** — verified absent from both build products by `Scripts/check-bundled-assets.sh`. |
 | Provenance | `ProductionAssets/Prompts/` |
 
@@ -180,7 +181,7 @@ engineering data.
 
 ## Validation completed
 
-- All 19 HEIC files decode as HEIF/HEVC still images at their specified dimensions.
+- All 20 HEIC files decode as HEIF/HEVC still images at their specified dimensions.
 - Every compressed image is within its production byte budget.
 - The parent-app and standalone production catalogs compile successfully with `actool`.
 - The app icon variants are 1024×1024 RGB PNGs without alpha.
@@ -205,5 +206,5 @@ engineering data.
 | `Assets/multiSet_logo_white.jpg` (1024², no alpha) | White treatment of the mark. No current use; a JPEG without alpha is hard to place over anything. |
 | `Assets/multiset_logo.png` (2048²) | Source for the superseded icon generator only. |
 
-Everything else produced is wired: 3 onboarding sets, 6 Learn sets, 4 state
-illustrations, and the app icon in both targets.
+Everything else produced is wired: 1 Home hero, 3 onboarding sets, 6 Learn sets,
+4 state illustrations, and the app icon in both targets.

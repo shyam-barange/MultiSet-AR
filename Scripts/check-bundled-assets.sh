@@ -53,7 +53,7 @@ if [ -d "$CLIP" ]; then
     fi
 
     # Named explicitly as well as by exclusion, so a renamed asset still trips it.
-    for prefix in onboarding- learn- clip-card; do
+    for prefix in home- onboarding- learn- clip-card; do
         if printf '%s\n' "$CLIP_NAMES" | grep -q "$prefix"; then
             fail "content asset matching '$prefix' found in the App Clip."
         fi

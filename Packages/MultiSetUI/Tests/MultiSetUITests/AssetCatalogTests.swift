@@ -18,6 +18,7 @@ final class StateArtTests: XCTestCase {
         // A package view looking in the main bundle is the classic silent failure,
         // so the bundle is asserted rather than assumed.
         XCTAssertEqual(StateArt.bundle, .module)
+        XCTAssertNil(HomeImage.bundle, "Home imagery belongs to the app target")
         XCTAssertNil(OnboardingImage.bundle, "content imagery belongs to the app target")
         XCTAssertNil(LearnImage.bundle, "content imagery belongs to the app target")
     }
@@ -55,7 +56,8 @@ final class StateArtTests: XCTestCase {
     }
 
     func testAssetNamesAreUniqueAcrossEveryCatalogEnum() {
-        let names = OnboardingImage.allCases.map(\.assetName)
+        let names = HomeImage.allCases.map(\.assetName)
+            + OnboardingImage.allCases.map(\.assetName)
             + LearnImage.allCases.map(\.assetName)
             + StateArt.allCases.map(\.assetName)
         XCTAssertEqual(Set(names).count, names.count, "duplicate asset name would shadow one of them")
@@ -63,7 +65,8 @@ final class StateArtTests: XCTestCase {
 
     func testAssetNamesAreKebabCaseMatchingTheCatalogLayout() {
         let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789-")
-        for name in OnboardingImage.allCases.map(\.assetName)
+        for name in HomeImage.allCases.map(\.assetName)
+            + OnboardingImage.allCases.map(\.assetName)
             + LearnImage.allCases.map(\.assetName)
             + StateArt.allCases.map(\.assetName) {
             XCTAssertTrue(
@@ -80,6 +83,7 @@ final class StateArtTests: XCTestCase {
     }
 
     func testCoverageMatchesTheProducedAssetSet() {
+        XCTAssertEqual(HomeImage.allCases.count, 1)
         XCTAssertEqual(OnboardingImage.allCases.count, 3)
         XCTAssertEqual(LearnImage.allCases.count, 6)
         XCTAssertEqual(StateArt.allCases.count, 4)

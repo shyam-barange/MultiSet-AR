@@ -43,6 +43,14 @@ public extension CatalogImage {
     }
 }
 
+/// Home-screen feature imagery. App target — see `CatalogImage`.
+public enum HomeImage: String, CatalogImage, CaseIterable, Sendable {
+    case spatialHero = "home-spatial-hero"
+
+    public var assetName: String { rawValue }
+    public static var bundle: Bundle? { nil }
+}
+
 /// Onboarding photography. App target — see `CatalogImage`.
 public enum OnboardingImage: String, CatalogImage, CaseIterable, Sendable {
     case map = "onboarding-01-map"

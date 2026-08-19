@@ -16,19 +16,24 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: MSSpacing.xl) {
-                    header
-                    primaryActions
+                LazyVStack(alignment: .leading, spacing: MSSpacing.xxl) {
+                    hero
+                    startSection
                     demoSection
-                    if !model.isSignedIn {
+                    if model.isSignedIn {
+                        workspaceSection
+                    } else {
                         signInPrompt
                     }
                     footer
                 }
-                .padding(MSSpacing.lg)
+                .padding(.horizontal, MSSpacing.lg)
+                .padding(.top, MSSpacing.sm)
+                .padding(.bottom, MSSpacing.xxl)
             }
             .background(MSColor.background.ignoresSafeArea())
-            .navigationTitle("MultiSet AR")
+            .navigationTitle("Home")
+            .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showsScanner) {
                 QRScannerSheet { code in
                     showsScanner = false
@@ -61,133 +66,332 @@ struct HomeView: View {
         }
     }
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: MSSpacing.sm) {
-            Text("Spatial ground truth, in your hand")
-                .font(MSFont.display)
-                .foregroundStyle(MSColor.textPrimary)
-            Text("Open a hosted experience, or try one of the demos — no account needed.")
-                .font(MSFont.callout)
-                .foregroundStyle(MSColor.textSecondary)
+    private var hero: some View {
+        ZStack(alignment: .bottomLeading) {
+            heroArtwork
+
+            LinearGradient(
+                colors: [.black.opacity(0.05), .black.opacity(0.18), .black.opacity(0.9)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            VStack(alignment: .leading, spacing: MSSpacing.md) {
+                Label("SPATIAL INTELLIGENCE", systemImage: "scope")
+                    .font(MSFont.monoSmall.weight(.semibold))
+                    .tracking(0.8)
+                    .foregroundStyle(.white.opacity(0.9))
+                    .padding(.horizontal, MSSpacing.sm)
+                    .padding(.vertical, 6)
+                    .background(.ultraThinMaterial, in: Capsule())
+
+                Spacer(minLength: MSSpacing.xxl)
+
+                Text("Know exactly\nwhere you are.")
+                    .font(MSFont.display)
+                    .foregroundStyle(.white)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text("Open a mapped space and let MultiSet turn the camera into precise, persistent position.")
+                    .font(MSFont.callout)
+                    .foregroundStyle(.white.opacity(0.82))
+                    .fixedSize(horizontal: false, vertical: true)
+
+                HStack(spacing: MSSpacing.sm) {
+                    heroFact("5 cm", label: "precision")
+                    heroFact("3", label: "offline demos")
+                }
+            }
+            .padding(MSSpacing.xl)
+        }
+        .frame(maxWidth: .infinity, minHeight: 390, alignment: .bottomLeading)
+        .clipShape(RoundedRectangle(cornerRadius: MSRadius.xl))
+        .overlay(
+            RoundedRectangle(cornerRadius: MSRadius.xl)
+                .strokeBorder(.white.opacity(0.12), lineWidth: 1)
+        )
+        .shadow(color: MSColor.accent.opacity(0.16), radius: 24, y: 12)
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var heroArtwork: some View {
+        if let image = HomeImage.spatialHero.image {
+            GeometryReader { proxy in
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                    .clipped()
+            }
+            .accessibilityHidden(true)
+        } else {
+            LinearGradient(
+                colors: [MSColor.accent, Color.black],
+                startPoint: .topTrailing,
+                endPoint: .bottomLeading
+            )
         }
     }
 
-    private var primaryActions: some View {
-        VStack(spacing: MSSpacing.md) {
-            actionCard(
-                symbol: "qrcode.viewfinder",
-                title: "Scan a code",
-                subtitle: "Open any hosted MultiSet experience"
-            ) { showsScanner = true }
-
-            actionCard(
-                symbol: "keyboard",
-                title: "Enter a code",
-                subtitle: "When the camera can't reach the printed code"
-            ) { showsCodeEntry = true }
+    private func heroFact(_ value: String, label: String) -> some View {
+        HStack(spacing: 5) {
+            Text(value).font(MSFont.monoSmall.weight(.bold))
+            Text(label).font(MSFont.caption)
         }
-        .overlay {
-            if resolving {
-                ProgressView()
-                    .padding(MSSpacing.lg)
-                    .background(MSColor.surfaceRaised, in: RoundedRectangle(cornerRadius: MSRadius.md))
+        .foregroundStyle(.white.opacity(0.88))
+        .padding(.horizontal, MSSpacing.sm)
+        .padding(.vertical, 7)
+        .background(.black.opacity(0.3), in: Capsule())
+    }
+
+    private var startSection: some View {
+        VStack(alignment: .leading, spacing: MSSpacing.md) {
+            MSSectionHeader(
+                "Start an experience",
+                subtitle: "Scan the code at a venue or enter its space code."
+            )
+
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: MSSpacing.md) { startActions }
+                VStack(spacing: MSSpacing.md) { startActions }
+            }
+            .buttonStyle(.plain)
+            .disabled(resolving)
+            .overlay {
+                if resolving {
+                    ProgressView("Opening")
+                        .font(MSFont.captionEmphasis)
+                        .padding(.horizontal, MSSpacing.lg)
+                        .padding(.vertical, MSSpacing.md)
+                        .background(.regularMaterial, in: Capsule())
+                        .shadow(radius: 12)
+                }
             }
         }
+    }
+
+    @ViewBuilder
+    private var startActions: some View {
+        Button { showsScanner = true } label: {
+            actionLabel(
+                symbol: "qrcode.viewfinder",
+                title: "Scan code",
+                subtitle: "Use camera",
+                primary: true
+            )
+        }
+
+        Button { showsCodeEntry = true } label: {
+            actionLabel(
+                symbol: "keyboard",
+                title: "Enter code",
+                subtitle: "Type instead",
+                primary: false
+            )
+        }
+    }
+
+    private func actionLabel(
+        symbol: String,
+        title: String,
+        subtitle: String,
+        primary: Bool
+    ) -> some View {
+        VStack(alignment: .leading, spacing: MSSpacing.md) {
+            HStack {
+                Image(systemName: symbol)
+                    .font(.system(size: 23, weight: .semibold))
+                Spacer(minLength: 0)
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 12, weight: .bold))
+                    .opacity(0.72)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(MSFont.headline)
+                Text(subtitle).font(MSFont.caption).opacity(0.72)
+            }
+        }
+        .foregroundStyle(primary ? MSColor.onAccent : MSColor.textPrimary)
+        .padding(MSSpacing.lg)
+        .frame(maxWidth: .infinity, minHeight: 132, alignment: .leading)
+        .background(primary ? MSColor.accent : MSColor.surface)
+        .overlay(
+            RoundedRectangle(cornerRadius: MSRadius.lg)
+                .strokeBorder(primary ? Color.clear : MSColor.borderSubtle, lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: MSRadius.lg))
+        .contentShape(Rectangle())
     }
 
     private var demoSection: some View {
         VStack(alignment: .leading, spacing: MSSpacing.md) {
             MSSectionHeader(
-                "Try it here",
-                subtitle: "These run without a mapped site or a network connection."
+                "Explore without a map",
+                subtitle: "Real AR workflows that run offline, wherever you are."
             )
-            ForEach(DemoKind.allCases) { demo in
-                NavigationLink {
-                    DemoRunnerView(demo: demo)
-                } label: {
-                    demoRow(demo)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: MSSpacing.md) {
+                    ForEach(DemoKind.allCases) { demo in
+                        NavigationLink {
+                            DemoRunnerView(demo: demo)
+                        } label: {
+                            demoCard(demo)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
-                .buttonStyle(.plain)
+                .padding(.vertical, 2)
             }
         }
     }
 
-    private func demoRow(_ demo: DemoKind) -> some View {
-        MSCard {
-            HStack(spacing: MSSpacing.md) {
+    private func demoCard(_ demo: DemoKind) -> some View {
+        VStack(alignment: .leading, spacing: MSSpacing.md) {
+            ZStack(alignment: .bottomLeading) {
+                LinearGradient(
+                    colors: [demo.tint.opacity(0.86), demo.tint.opacity(0.24)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
                 Image(systemName: demo.symbolName)
-                    .font(.system(size: 20, weight: .medium))
+                    .font(.system(size: 38, weight: .light))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(.white)
+                    .padding(MSSpacing.lg)
+            }
+            .frame(height: 112)
+            .clipShape(RoundedRectangle(cornerRadius: MSRadius.md))
+
+            Text(demo.eyebrow.uppercased())
+                .font(MSFont.monoSmall.weight(.semibold))
+                .tracking(0.6)
+                .foregroundStyle(demo.tint)
+
+            Text(demo.title)
+                .font(MSFont.headline)
+                .foregroundStyle(MSColor.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(demo.shortSubtitle)
+                .font(MSFont.caption)
+                .foregroundStyle(MSColor.textSecondary)
+                .lineLimit(2)
+
+            HStack {
+                Text("Try demo")
+                    .font(MSFont.captionEmphasis)
+                Spacer(minLength: 0)
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 11, weight: .bold))
+            }
+            .foregroundStyle(MSColor.textPrimary)
+        }
+        .padding(MSSpacing.md)
+        .frame(width: 236)
+        .frame(minHeight: 300, alignment: .topLeading)
+        .background(MSColor.surface)
+        .overlay(
+            RoundedRectangle(cornerRadius: MSRadius.lg)
+                .strokeBorder(MSColor.borderSubtle, lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: MSRadius.lg))
+    }
+
+    private var workspaceSection: some View {
+        VStack(alignment: .leading, spacing: MSSpacing.md) {
+            MSSectionHeader("Your workspace", subtitle: "Pick up where you left off.")
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: MSSpacing.md) { workspaceActions }
+                VStack(spacing: MSSpacing.md) { workspaceActions }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var workspaceActions: some View {
+        workspaceButton(
+            symbol: "square.stack.3d.up",
+            title: "Library",
+            subtitle: "Maps & objects",
+            tab: .library
+        )
+        workspaceButton(
+            symbol: "qrcode",
+            title: "Publish",
+            subtitle: "Share an experience",
+            tab: .publish
+        )
+    }
+
+    private func workspaceButton(
+        symbol: String,
+        title: String,
+        subtitle: String,
+        tab: RootTab
+    ) -> some View {
+        Button { model.selectedTab = tab } label: {
+            VStack(alignment: .leading, spacing: MSSpacing.sm) {
+                Image(systemName: symbol)
+                    .font(.system(size: 21, weight: .medium))
                     .foregroundStyle(MSColor.accent)
-                    .frame(width: MSSize.iconLg)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(demo.title)
-                        .font(MSFont.bodyEmphasis)
+                Text(title)
+                    .font(MSFont.bodyEmphasis)
+                    .foregroundStyle(MSColor.textPrimary)
+                Text(subtitle)
+                    .font(MSFont.caption)
+                    .foregroundStyle(MSColor.textSecondary)
+                    .lineLimit(2)
+            }
+            .padding(MSSpacing.lg)
+            .frame(maxWidth: .infinity, minHeight: 128, alignment: .leading)
+            .background(MSColor.surface)
+            .overlay(
+                RoundedRectangle(cornerRadius: MSRadius.lg)
+                    .strokeBorder(MSColor.borderSubtle, lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: MSRadius.lg))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var signInPrompt: some View {
+        VStack(alignment: .leading, spacing: MSSpacing.md) {
+            HStack(alignment: .top, spacing: MSSpacing.md) {
+                Image(systemName: "person.crop.circle.badge.checkmark")
+                    .font(.system(size: 28, weight: .medium))
+                    .foregroundStyle(MSColor.accent)
+                VStack(alignment: .leading, spacing: MSSpacing.xs) {
+                    Text("Bring your workspace with you")
+                        .font(MSFont.headline)
                         .foregroundStyle(MSColor.textPrimary)
-                    Text(demo.subtitle)
+                    Text("Sign in to browse maps, test localization on site, and publish experiences.")
                         .font(MSFont.caption)
                         .foregroundStyle(MSColor.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(MSColor.textMuted)
             }
+            Button("Sign in to MultiSet") { showsSignIn = true }
+                .msButton(.primary, fullWidth: false)
         }
-    }
-
-    private var signInPrompt: some View {
-        MSCard {
-            VStack(alignment: .leading, spacing: MSSpacing.md) {
-                Text("Have a MultiSet account?")
-                    .font(MSFont.headline)
-                    .foregroundStyle(MSColor.textPrimary)
-                Text("Sign in to browse your maps and tracked objects, test localization on site, and publish experiences.")
-                    .font(MSFont.caption)
-                    .foregroundStyle(MSColor.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Button("Sign in") { showsSignIn = true }
-                    .msButton(.primary, fullWidth: false)
-            }
-        }
+        .padding(MSSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(MSColor.accentSoft)
+        .overlay(
+            RoundedRectangle(cornerRadius: MSRadius.lg)
+                .strokeBorder(MSColor.accent.opacity(0.18), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: MSRadius.lg))
     }
 
     private var footer: some View {
-        VStack(alignment: .leading, spacing: MSSpacing.xs) {
-            Text(CompanyInfo.copyright)
-                .font(MSFont.monoSmall)
-                .foregroundStyle(MSColor.textMuted)
-        }
-        .padding(.top, MSSpacing.lg)
-    }
-
-    private func actionCard(
-        symbol: String,
-        title: String,
-        subtitle: String,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            MSCard {
-                HStack(spacing: MSSpacing.md) {
-                    Image(systemName: symbol)
-                        .font(.system(size: 22, weight: .medium))
-                        .foregroundStyle(MSColor.accent)
-                        .frame(width: MSSize.iconLg)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(title)
-                            .font(MSFont.headline)
-                            .foregroundStyle(MSColor.textPrimary)
-                        Text(subtitle)
-                            .font(MSFont.caption)
-                            .foregroundStyle(MSColor.textSecondary)
-                    }
-                    Spacer(minLength: 0)
-                }
-            }
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("\(title). \(subtitle)")
+        Text(CompanyInfo.copyright)
+            .font(MSFont.monoSmall)
+            .foregroundStyle(MSColor.textMuted)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.top, MSSpacing.sm)
     }
 
     // MARK: - Actions
@@ -213,6 +417,32 @@ struct HomeView: View {
             manifest = try await model.api.resolveExperience(spaceCode: spaceCode)
         } catch {
             resolveError = error.asMultiSetError
+        }
+    }
+}
+
+private extension DemoKind {
+    var eyebrow: String {
+        switch self {
+        case .objectTracking: "Object tracking"
+        case .syntheticNavigation: "Navigation"
+        case .simulatedLocalization: "Localization"
+        }
+    }
+
+    var shortSubtitle: String {
+        switch self {
+        case .objectTracking: "Lock a virtual object to a printed target."
+        case .syntheticNavigation: "Follow a rendered path around the room."
+        case .simulatedLocalization: "Replay a walk through the VPS pipeline."
+        }
+    }
+
+    var tint: Color {
+        switch self {
+        case .objectTracking: MSColor.accent
+        case .syntheticNavigation: MSColor.info
+        case .simulatedLocalization: MSColor.success
         }
     }
 }
