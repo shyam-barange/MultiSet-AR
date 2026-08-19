@@ -18,13 +18,25 @@ public enum DeepLinkDestination: Sendable, Equatable {
 /// Parses inbound URLs for both targets. One router so the App and the Clip can
 /// never disagree about what a link means.
 public struct DeepLinkRouter: Sendable {
-    /// Hosts that may carry a hosted experience, and the path prefix each uses.
-    /// Both are accepted because the canonical domain is settled by whichever
-    /// gets an `apple-app-site-association` file first.
-    public static let experienceHosts: [String: String] = [
-        "app.multiset.ai": "space",
-        "clip.multiset.ai": "e"
+    /// Hosts that may carry a hosted experience, and the path prefixes each
+    /// accepts.
+    ///
+    /// `api.multiset.ai` is the domain that hosts the
+    /// `apple-app-site-association` file, so it is where App Clip invocations
+    /// actually arrive and what printed QR codes encode. It accepts both
+    /// prefixes because the canonical path shape is not settled yet.
+    /// `app.multiset.ai/space/{code}` is the platform's own web share URL and is
+    /// still recognised so an older link or a pasted dashboard URL keeps working.
+    public static let experienceHosts: [String: Set<String>] = [
+        "api.multiset.ai": ["space", "e"],
+        "app.multiset.ai": ["space"],
+        "clip.multiset.ai": ["e"]
     ]
+
+    /// The host that serves the AASA file, and therefore the only one whose
+    /// links can launch the App Clip. Generated QR codes point here.
+    public static let canonicalExperienceHost = "api.multiset.ai"
+    public static let canonicalExperiencePrefix = "space"
 
     public static let customScheme = "multisetar"
 
@@ -46,7 +58,7 @@ public struct DeepLinkRouter: Sendable {
     private func webDestination(_ url: URL) -> DeepLinkDestination? {
         guard let scheme = url.scheme?.lowercased(), scheme == "https",
               let host = url.host?.lowercased(),
-              let expectedPrefix = Self.experienceHosts[host]
+              let acceptedPrefixes = Self.experienceHosts[host]
         else { return nil }
 
         // Exactly two segments. A hosted-experience URL is always
@@ -54,7 +66,7 @@ public struct DeepLinkRouter: Sendable {
         // smuggle extra path through, and must not be truncated into a code.
         let segments = pathSegments(url)
         guard segments.count == 2,
-              segments[0].lowercased() == expectedPrefix,
+              acceptedPrefixes.contains(segments[0].lowercased()),
               let code = validated(segments[1])
         else { return nil }
 
@@ -117,9 +129,14 @@ public struct DeepLinkRouter: Sendable {
         return candidate
     }
 
-    /// The canonical URL to print on a QR code.
-    public static func experienceURL(spaceCode: String, host: String = "app.multiset.ai") -> URL? {
-        guard let prefix = experienceHosts[host] else { return nil }
+    /// The URL to print on a QR code. Defaults to the AASA host, since a link on
+    /// any other domain cannot launch the App Clip.
+    public static func experienceURL(
+        spaceCode: String,
+        host: String = canonicalExperienceHost,
+        prefix: String = canonicalExperiencePrefix
+    ) -> URL? {
+        guard let accepted = experienceHosts[host], accepted.contains(prefix) else { return nil }
         return URL(string: "https://\(host)/\(prefix)/\(spaceCode)")
     }
 }

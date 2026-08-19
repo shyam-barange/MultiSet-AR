@@ -13,8 +13,8 @@ Design decisions and the findings behind them are in
 ```
 MultiSet AR/
 ├─ MultiSet AR.xcodeproj        generated — see Scripts/generate-project.py
-├─ App/                         com.multiset.ar
-├─ Clip/                        com.multiset.ar.Clip
+├─ App/                         com.multiset.sdk
+├─ Clip/                        com.multiset.sdk.Clip
 ├─ Config/*.xcconfig            build settings as text
 ├─ Packages/
 │  ├─ MultiSetKit/              API, models, auth, keychain, deep links
@@ -32,6 +32,20 @@ python3 Scripts/generate-project.py
 
 Hand-editing the project file works but will be overwritten. Build settings live
 in `Config/*.xcconfig`, not in the project.
+
+## Identifiers
+
+| | |
+|---|---|
+| Parent bundle ID | `com.multiset.sdk` |
+| App Clip bundle ID | `com.multiset.sdk.Clip` |
+| Associated domain, app | `applinks:api.multiset.ai` |
+| Associated domain, Clip | `appclips:api.multiset.ai` |
+| Custom scheme | `multisetar://` |
+| Device family | `1,2` on **both** targets — Apple requires the Clip's `UIDeviceFamily` to equal its parent's. iPad's all-orientations rule is met with `UISupportedInterfaceOrientations~ipad` in `Clip/Info.plist`, not by narrowing the Clip to iPhone. |
+
+The prefix lives once, in `Config/Shared.xcconfig` as
+`MULTISET_BUNDLE_ID_PREFIX`; both targets derive from it.
 
 ## The constraint that shapes everything
 
@@ -104,6 +118,36 @@ The one real gap is nav graphs — no API models a graph. This app stores its ex
 fields in the Content Space `metadata` bag under `msar.*` keys
 (`ExperienceManifestBuilder.MetadataKey`). Anything absent falls back to a
 default, so a space created in the web dashboard still opens.
+
+## Deep links
+
+`api.multiset.ai` serves the `apple-app-site-association` file, so it is the only
+host whose links can launch the Clip, and it is what generated QR codes encode
+(`ContentSpace.shareURL`). The other two stay recognised so an older printed code,
+or a URL pasted from the dashboard, keeps working.
+
+| Host | Accepted paths | Role |
+|---|---|---|
+| `api.multiset.ai` | `/space/{code}`, `/e/{code}` | AASA host — Clip invocations arrive here |
+| `app.multiset.ai` | `/space/{code}` | the platform's own web share URL |
+| `clip.multiset.ai` | `/e/{code}` | reserved |
+
+One `DeepLinkRouter` in `MultiSetKit`, shared by both targets, so the app and the
+Clip cannot disagree about what a link means. Tested against hostile input: wrong
+host, lookalike host suffixes (`api.multiset.ai.evil.com`), path traversal,
+unicode homoglyphs, missing code, over-long code, embedded credentials in the
+authority, and mismatched host/prefix pairs. A URL must have exactly two path
+segments — accepting extra ones would silently truncate a malformed URL into a
+valid-looking code.
+
+`?mode=` is a testing override only. The canonical mode lives in the manifest, so
+a stale printed QR cannot pin the wrong one.
+
+**One consequence worth deciding on.** `api.multiset.ai` also serves the REST API,
+so a scan on Android or in a desktop browser hits the API rather than a landing
+page. Either add a `/space/{code}` route on that host that redirects to the web
+experience, or accept that non-iOS scans get an API response.
+`ContentSpace.webURL` carries the `app.multiset.ai` form for that purpose.
 
 ## Two API shape traps
 

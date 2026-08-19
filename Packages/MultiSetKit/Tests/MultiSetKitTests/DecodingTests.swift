@@ -231,9 +231,14 @@ final class DecodingTests: XCTestCase {
         XCTAssertNil(PointOfInterest(content: content))
     }
 
-    func testContentSpaceShareURLMatchesPlatformFormat() {
+    func testShareURLPointsAtTheAASAHostSoTheClipCanLaunch() {
         let space = ContentSpace(id: "s", name: "N", spaceCode: "k7m2p9xq")
-        XCTAssertEqual(space.shareURL?.absoluteString, "https://app.multiset.ai/space/k7m2p9xq")
+        XCTAssertEqual(space.shareURL?.absoluteString, "https://api.multiset.ai/space/k7m2p9xq")
+    }
+
+    func testWebURLKeepsThePlatformShareFormatForBrowsers() {
+        let space = ContentSpace(id: "s", name: "N", spaceCode: "k7m2p9xq")
+        XCTAssertEqual(space.webURL?.absoluteString, "https://app.multiset.ai/space/k7m2p9xq")
     }
 
     func testHeatmapResponseAcceptsAnyOfItsThreeArrayKeys() throws {

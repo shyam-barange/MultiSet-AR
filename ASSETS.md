@@ -21,17 +21,17 @@ the App Clip can afford them.
 | Printable demo target | `App/Support/QRCode.swift` | Vector PDF; asymmetric corner blocks so orientation resolves, not just position |
 | All UI icons | throughout | SF Symbols only |
 
-The repo also carries hand-authored SVGs for the same four empty states, from the
-initial commit, in `Assets/empty-state-svg/`. They are kept as design source but
-are **not** in either asset catalog: the `Canvas` implementation is parameterised
-— the searching state converges as attempts accumulate, which a static SVG cannot
-do — and it needs no catalog entry, which keeps the Clip's catalog to an icon set
-alone. Swap to the SVGs if a designer prefers them; they would need adding to both
-targets and marking as template-rendered to tint.
+The repo also carries hand-authored SVGs for the same four empty states in
+`Assets/empty-state-svg/` and `ProductionAssets/Vector/EmptyStates/`. They are
+kept as design source but are **not** in either shipping asset catalog: the
+`Canvas` implementation is parameterised — the searching state converges as
+attempts accumulate — and it costs no catalog bytes.
 
 ## Photographic imagery — `ProductionAssets/`
 
-Produced to the direction in `Assets/multiset-ar-asset-production-brief.md`.
+Produced to the direction in `Assets/multiset-ar-asset-production-brief.md` on
+2026-08-19 with OpenAI's built-in image-generation tool. The tool did not expose
+a reproducible seed. No third-party reference photography was used.
 
 | | |
 |---|---|
@@ -39,24 +39,26 @@ Produced to the direction in `Assets/multiset-ar-asset-production-brief.md`.
 | Contents | 3 onboarding illustrations + 6 Learn capability cards, light and dark each |
 | Format | HEIC, per the brief's format note |
 | Onboarding | 1290² · `OnboardingMap`, `OnboardingLocalize`, `OnboardingGuide` |
-| Learn | 16:10 · `LearnVPS`, `LearnObjectTracking`, `LearnMapping`, `LearnE57`, `Learn3DGS`, `Learn360` |
+| Learn | 1600×1000 · `LearnVPS`, `LearnObjectTracking`, `LearnMapping`, `LearnE57`, `Learn3DGS`, `Learn360` |
 | Clip card header | `ProductionAssets/Optimized/Clip/clip-card-header.heic`, 3000×2000. **Uploaded to App Store Connect, never bundled** — the Clip's catalog stays at an icon set alone. |
-| Provenance | `ProductionAssets/Prompts/*.tsv` records the generator output path per image |
+| Style anchor | `ProductionAssets/Raster/Clip/clip-card-header-source.png` |
+| Prompt record | `ProductionAssets/Prompts/final-prompts.md` records the final prompt set and edit chain; the TSV files map generator outputs |
 
 Both view layers fall back to the geometric illustration family if a named image
 is missing, so a dropped asset degrades instead of leaving a blank card.
 
-### Repo size
+### Compression results
 
-`ProductionAssets/Raster/` is 99 MB of full-resolution source PNGs; everything
-that ships is the 3.5 MB of HEIC in `Optimized/` and the asset catalog. The
-rasters are tracked because the `Prompts/` TSVs point at paths outside the repo,
-making these the only durable copy — but they will slow clones. **Recommend
-moving `ProductionAssets/Raster/**` to Git LFS.** Not done here: converting
-rewrites history, which is the repo owner's call.
+| Group | Largest final file | Budget |
+|---|---:|---:|
+| Onboarding | 204,773 B | 400 KB each |
+| Learn | 270,535 B | 300 KB each |
+| Clip header | 338,414 B | 2 MB |
 
-`ProductionAssets/QA/` is empty; the brief's §12 checklist has not been run
-against the final assets yet.
+`ProductionAssets/Raster/` contains the full-resolution PNG masters. The HEIC
+derivatives and appearance-aware catalog are the shipping copies. Moving the PNG
+masters to Git LFS remains a repository-owner decision because that can rewrite
+history.
 
 ## App icon
 
@@ -64,22 +66,23 @@ against the final assets yet.
 |---|---|
 | Ships from | `ProductionAssets/AppIcon/app-icon-{light,dark,tinted}.png` |
 | Installed at | `App/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-{Light,Dark,Tinted}-Production.png` |
-| Spec | 1024², opaque, no alpha — verified with `sips -g hasAlpha` |
-| Idea | The brand mark as a survey control point: the mark centred in a registration cross with tick terminals. Two elements, no text, no gradient carrying the design. |
+| Spec | 1024², opaque, no alpha — verified with ImageIO |
+| Idea | The existing MultiSet mark as a survey control point: the mark centred in a precise registration cross with tick terminals. Two elements, no text, no baked corners. |
+| Tinted | Deliberate single-colour mark treatment so it does not rely on multicolour contrast |
 | Clip icon | Same files. Apple applies its own Clip badge — not pre-badged. |
 
 `Scripts/generate-app-icon.swift` builds the same idea from
-`Assets/multiset_logo.png` and was used before the production icons arrived. It is
-kept for exploring variants and is marked superseded in its header — **do not
-regenerate over the production files.**
+`Assets/multiset_logo.png` and is retained only for exploring variants. Do not
+regenerate over the production files.
 
-**Still to check at 40 pt** beside the existing MultiSet app, in all three
-variants, per the brief's §12 checklist.
+Pixel-scale inspection files for 40, 60, and 76 px are in `ProductionAssets/QA/`.
+The remaining manual check is comparison beside the existing MultiSet app on a
+real Home Screen.
 
 ## Colour
 
-Extracted from the dashboard's own CSS
-(`Multiset-Dashboard/multiset-dashboard/src/app/globals.css`), not approximated:
+Extracted from the dashboard's CSS
+(`Multiset-Dashboard/multiset-dashboard/src/app/globals.css`):
 
 | Token | Light | Dark |
 |---|---|---|
@@ -89,7 +92,9 @@ Extracted from the dashboard's own CSS
 | text primary | `#111028` | `#F4F2FA` |
 | border | `#E0DEE8` | `#2E2A45` |
 
-The SDK sample app uses `#7B2CBF`; the dashboard's `#7C3AED` is canonical here.
+The UI uses the dashboard's canonical `#7C3AED`. The photographic measurement
+overlays use `#7B2CBF`, sampled from the supplied logo, with `#A85BE8` in dark
+imagery so the technical layer survives low ambient light.
 
 ## Type
 
@@ -98,6 +103,16 @@ and shipping brand fonts in the app but not the Clip would make the two look lik
 different products. SF also gets Dynamic Type and VoiceOver metrics right for
 free. The brand carries through colour, spacing, and the mono treatment of
 engineering data.
+
+## Validation completed
+
+- All 19 HEIC files decode as HEIF/HEVC still images at their specified dimensions.
+- Every compressed image is within its production byte budget.
+- The parent-app and standalone production catalogs compile successfully with `actool`.
+- The app icon variants are 1024×1024 RGB PNGs without alpha.
+- The Clip catalog contains no generated photographic raster assets.
+- The four SVG design sources are 418–520 bytes each, far below the 10 KB limit.
+- An unsigned generic-device build of the parent app and embedded App Clip succeeds.
 
 ## Not produced yet
 

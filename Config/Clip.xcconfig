@@ -12,6 +12,7 @@ GENERATE_INFOPLIST_FILE = NO
 SWIFT_EMIT_LOC_STRINGS = YES
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
 
-// App Clips ship for iPhone only. Declaring iPad support would oblige us to
-// support every orientation, which a handheld AR session does not want.
-TARGETED_DEVICE_FAMILY = 1
+// TARGETED_DEVICE_FAMILY is deliberately NOT set here. Apple requires the Clip's
+// UIDeviceFamily to equal its parent app's, so both inherit 1,2 from
+// Shared.xcconfig. iPad's all-orientations requirement is met by the
+// UISupportedInterfaceOrientations~ipad key in Clip/Info.plist.

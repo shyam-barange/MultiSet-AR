@@ -6,7 +6,7 @@ import Security
 public struct Keychain: Sendable {
     private let service: String
 
-    public init(service: String = "ai.multiset.ar.credentials") {
+    public init(service: String = "ai.multiset.sdk.credentials") {
         self.service = service
     }
 

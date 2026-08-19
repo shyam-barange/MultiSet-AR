@@ -70,7 +70,7 @@ secret.
 Invocation URL — tappable:
 
 ```
-https://app.multiset.ai/space/<fill in before submission>
+https://api.multiset.ai/space/<fill in before submission>
 ```
 
 A QR encoding the same URL is attached to this submission.

@@ -137,8 +137,16 @@ public struct ContentSpace: Codable, Sendable, Identifiable, Hashable {
 
     public var isPublished: Bool { status?.lowercased() == "published" }
 
-    /// The URL printed on a QR code. Also the App Clip invocation URL.
+    /// The URL printed on a QR code, and the App Clip invocation URL. Points at
+    /// the host serving the AASA file — a link anywhere else cannot launch the
+    /// Clip, however valid it looks.
     public var shareURL: URL? {
+        DeepLinkRouter.experienceURL(spaceCode: spaceCode)
+    }
+
+    /// The platform's own web share URL, for opening the experience in a browser
+    /// on a device that cannot run the Clip.
+    public var webURL: URL? {
         URL(string: "https://app.multiset.ai/space/\(spaceCode)")
     }
 }

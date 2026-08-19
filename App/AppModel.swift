@@ -49,7 +49,7 @@ final class AppModel: ObservableObject {
         self.api = api ?? LiveMultiSetAPI(environment: environment, auth: store)
     }
 
-    private static let onboardingKey = "com.multiset.ar.hasCompletedOnboarding"
+    private static let onboardingKey = "com.multiset.sdk.hasCompletedOnboarding"
 
     /// Previews and the demo modes run against fixtures with no network.
     static func preview(
@@ -59,7 +59,7 @@ final class AppModel: ObservableObject {
         let model = AppModel(
             api: MockMultiSetAPI(behaviour: behaviour),
             auth: AuthStore(secrets: InMemorySecretStore()),
-            defaults: UserDefaults(suiteName: "com.multiset.ar.preview") ?? .standard
+            defaults: UserDefaults(suiteName: "com.multiset.sdk.preview") ?? .standard
         )
         model.session = session
         model.hasCompletedOnboarding = true

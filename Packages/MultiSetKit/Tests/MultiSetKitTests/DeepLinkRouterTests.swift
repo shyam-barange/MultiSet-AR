@@ -11,7 +11,26 @@ final class DeepLinkRouterTests: XCTestCase {
 
     // MARK: - Accepted forms
 
+    func testAcceptsAPIHostWhichServesTheAASAFile() {
+        // api.multiset.ai hosts apple-app-site-association, so it is the only
+        // domain whose links can actually launch the Clip.
+        XCTAssertEqual(
+            destination("https://api.multiset.ai/space/k7m2p9xq"),
+            .experience(spaceCode: "k7m2p9xq", modeOverride: nil)
+        )
+    }
+
+    func testAPIHostAcceptsEitherPathPrefix() {
+        // The canonical path shape is not settled, so both are recognised there.
+        XCTAssertEqual(
+            destination("https://api.multiset.ai/e/k7m2p9xq"),
+            .experience(spaceCode: "k7m2p9xq", modeOverride: nil)
+        )
+    }
+
     func testAcceptsAppHostSpacePath() {
+        // The platform's own web share URL stays recognised, so a pasted
+        // dashboard link keeps working.
         XCTAssertEqual(
             destination("https://app.multiset.ai/space/k7m2p9xq"),
             .experience(spaceCode: "k7m2p9xq", modeOverride: nil)
@@ -34,7 +53,7 @@ final class DeepLinkRouterTests: XCTestCase {
 
     func testHostMatchingIsCaseInsensitive() {
         XCTAssertEqual(
-            destination("https://APP.MultiSet.AI/space/abc123"),
+            destination("https://API.MultiSet.AI/space/abc123"),
             .experience(spaceCode: "abc123", modeOverride: nil)
         )
     }
@@ -81,11 +100,13 @@ final class DeepLinkRouterTests: XCTestCase {
 
     func testRejectsWrongHost() {
         XCTAssertNil(destination("https://evil.example.com/space/abc123"))
-        XCTAssertNil(destination("https://api.multiset.ai/space/abc123"))
+        XCTAssertNil(destination("https://multiset.ai/space/abc123"))
+        XCTAssertNil(destination("https://dev-api.multiset.ai/space/abc123"))
     }
 
     func testRejectsLookalikeHostWithSuffix() {
         XCTAssertNil(destination("https://app.multiset.ai.evil.com/space/abc123"))
+        XCTAssertNil(destination("https://api.multiset.ai.evil.com/space/abc123"))
     }
 
     func testRejectsPlainHTTP() {
@@ -96,6 +117,7 @@ final class DeepLinkRouterTests: XCTestCase {
         // `/e/` belongs to clip.multiset.ai, not app.multiset.ai.
         XCTAssertNil(destination("https://app.multiset.ai/e/abc123"))
         XCTAssertNil(destination("https://clip.multiset.ai/space/abc123"))
+        XCTAssertNil(destination("https://api.multiset.ai/v1/abc123"))
     }
 
     func testRejectsMissingCode() {
@@ -144,18 +166,31 @@ final class DeepLinkRouterTests: XCTestCase {
 
     // MARK: - Round trip
 
-    func testExperienceURLRoundTripsThroughTheRouter() throws {
-        for host in DeepLinkRouter.experienceHosts.keys {
-            let url = try XCTUnwrap(DeepLinkRouter.experienceURL(spaceCode: "k7m2p9xq", host: host))
-            XCTAssertEqual(
-                router.destination(for: url),
-                .experience(spaceCode: "k7m2p9xq", modeOverride: nil),
-                "round trip failed for \(host)"
-            )
+    func testExperienceURLDefaultsToTheAASAHost() throws {
+        // A QR pointing anywhere else cannot launch the Clip, however valid it looks.
+        let url = try XCTUnwrap(DeepLinkRouter.experienceURL(spaceCode: "k7m2p9xq"))
+        XCTAssertEqual(url.absoluteString, "https://api.multiset.ai/space/k7m2p9xq")
+    }
+
+    func testExperienceURLRoundTripsForEveryHostAndPrefix() throws {
+        for (host, prefixes) in DeepLinkRouter.experienceHosts {
+            for prefix in prefixes {
+                let url = try XCTUnwrap(
+                    DeepLinkRouter.experienceURL(spaceCode: "k7m2p9xq", host: host, prefix: prefix)
+                )
+                XCTAssertEqual(
+                    router.destination(for: url),
+                    .experience(spaceCode: "k7m2p9xq", modeOverride: nil),
+                    "round trip failed for \(host)/\(prefix)"
+                )
+            }
         }
     }
 
-    func testExperienceURLRejectsUnknownHost() {
+    func testExperienceURLRejectsUnknownHostOrMismatchedPrefix() {
         XCTAssertNil(DeepLinkRouter.experienceURL(spaceCode: "abc", host: "evil.com"))
+        XCTAssertNil(
+            DeepLinkRouter.experienceURL(spaceCode: "abc", host: "app.multiset.ai", prefix: "e")
+        )
     }
 }

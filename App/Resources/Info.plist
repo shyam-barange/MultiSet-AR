@@ -18,17 +18,42 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.multiset.sdk.deeplink</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>multisetar</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>MultiSet AR uses the camera to recognize your surroundings and position AR content accurately in the space around you.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location narrows down which mapped area you're in, so positioning is faster and more accurate.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save AR screenshots to your photo library.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
 		<string>LaunchBackground</string>
 	</dict>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -40,30 +65,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>arm64</string>
-	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>MultiSet AR uses the camera to recognize your surroundings and position AR content accurately in the space around you.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location narrows down which mapped area you're in, so positioning is faster and more accurate.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Save AR screenshots to your photo library.</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>com.multiset.ar.deeplink</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>multisetar</string>
-			</array>
-		</dict>
-	</array>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 </dict>
 </plist>

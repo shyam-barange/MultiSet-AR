@@ -98,6 +98,17 @@ POST /v1/m2m, GET /v1/m2m    ← the app can mint its own SDK credentials
 | D1 | **Swappable pose provider** — one shared AR state machine + rendering; two pose sources | Clip cannot link the SDK (§2.3), but UX must not diverge (build prompt §2.5) |
 | D2 | **Email/password sign-in, then silently mint M2M credentials** | Only path to the list/analytics endpoints (§2.4); developer never types a client ID |
 | D3 | **`DeepLinkRouter` accepts both hosts**, config-driven | Unblocks all app work before an AASA file exists anywhere |
+
+**D3 superseded, 2026-08-19.** The AASA file goes on `api.multiset.ai`, so that
+host is now canonical and generated QR codes point there. `app.multiset.ai` and
+`clip.multiset.ai` stay recognised for older links. The bundle identifiers also
+changed to `com.multiset.sdk` and `com.multiset.sdk.Clip`. See
+[`ARCHITECTURE.md`](../../../ARCHITECTURE.md) — Identifiers and Deep links.
+
+Note this reverses the build prompt's §2.2 argument against putting user-facing
+deep-link infrastructure on the API domain. That was the customer's call; the
+practical cost is that a non-iOS scan reaches the API rather than a landing page,
+which is noted in ARCHITECTURE.md.
 | D4 | **SF Pro + SF Mono, no bundled fonts** | Clip byte budget forbids bundled faces; per-target font divergence would make App and Clip look like different products; SF gets Dynamic Type and VoiceOver metrics right |
 | D5 | **Heatmap + pose readout is the signature element** | One mono component reused in the AR HUD and Map Detail; backed by a real endpoint |
 | D6 | **No backend** | §2.2 |
@@ -190,8 +201,9 @@ enum ExperienceUnavailableReason: Sendable {
 ### 4.6 Deep links
 
 ```swift
-["app.multiset.ai":  .space,      // /space/{spaceCode}
- "clip.multiset.ai": .experience] // /e/{slug}
+["api.multiset.ai":  ["space", "e"],  // AASA host — canonical
+ "app.multiset.ai":  ["space"],       // platform web share URL
+ "clip.multiset.ai": ["e"]]           // reserved
 ```
 
 One `DeepLinkRouter` in `MultiSetKit`, shared by both targets, tested against

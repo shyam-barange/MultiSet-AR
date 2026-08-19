@@ -4,12 +4,11 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:app.multiset.ai</string>
-		<string>applinks:clip.multiset.ai</string>
+		<string>applinks:api.multiset.ai</string>
 	</array>
 	<key>com.apple.developer.associated-appclip-app-identifiers</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.multiset.ar.Clip</string>
+		<string>$(AppIdentifierPrefix)com.multiset.sdk.Clip</string>
 	</array>
 </dict>
 </plist>

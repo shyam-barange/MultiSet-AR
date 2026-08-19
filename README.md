@@ -57,8 +57,8 @@ Build settings live in `Config/*.xcconfig` rather than in the project.
 ## Structure
 
 ```
-App/            com.multiset.ar — the full app, and the only target that links the SDK
-Clip/           com.multiset.ar.Clip — a launcher with three screens
+App/            com.multiset.sdk — the full app, and the only target that links the SDK
+Clip/           com.multiset.sdk.Clip — a launcher with three screens
 Packages/
   MultiSetKit     API client, models, auth, keychain, deep links
   MultiSetARCore  pose providers, AR session engine, nav, procedural rendering, AR views
