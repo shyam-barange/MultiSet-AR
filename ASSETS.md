@@ -124,6 +124,10 @@ Inspected for baked fills before switching to template mode: three carry
 `fill="#000"` and four `fill="none"`, all of which template rendering replaces
 cleanly.
 
+Two copies exist by design: `ProductionAssets/Vector/EmptyStates/` is the master,
+and `MultiSetUI/Resources/StateArt.xcassets/` is the shipping copy. A third copy
+under `Assets/` was removed.
+
 `state-searching` is also drawn procedurally in
 `MSIllustration.searching(progress:)`, and the AR coaching overlay uses that
 version rather than the vector — it converges as attempts accumulate, which a
@@ -190,3 +194,16 @@ engineering data.
 |---|---|
 | USDZ showcase models (4–6) | Need licensed sources; generated 3D is not production quality for AR. Record each licence here. |
 | App Store screenshots and preview video | Need a real mapped site and official Apple device frames. |
+
+
+## Unused assets
+
+| Asset | Status |
+|---|---|
+| `ProductionAssets/Optimized/Clip/clip-card-header.heic` | Correct — an App Store Connect upload, deliberately in no target. Still to be uploaded. |
+| `Assets/logo.png` (2736×732, alpha) | The horizontal mark + wordmark lockup. **Not yet used anywhere in the UI.** |
+| `Assets/multiSet_logo_white.jpg` (1024², no alpha) | White treatment of the mark. No current use; a JPEG without alpha is hard to place over anything. |
+| `Assets/multiset_logo.png` (2048²) | Source for the superseded icon generator only. |
+
+Everything else produced is wired: 3 onboarding sets, 6 Learn sets, 4 state
+illustrations, and the app icon in both targets.
