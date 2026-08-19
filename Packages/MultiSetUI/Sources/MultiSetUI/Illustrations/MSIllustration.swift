@@ -136,18 +136,18 @@ public struct MSIllustrationView: View {
 
 /// An empty state is an invitation with an action, not an apology.
 public struct MSEmptyState<Action: View>: View {
-    private let illustration: MSIllustration
+    private let art: StateArt
     private let title: String
     private let message: String
     private let action: Action
 
     public init(
-        _ illustration: MSIllustration,
+        _ art: StateArt,
         title: String,
         message: String,
         @ViewBuilder action: () -> Action
     ) {
-        self.illustration = illustration
+        self.art = art
         self.title = title
         self.message = message
         self.action = action()
@@ -155,7 +155,7 @@ public struct MSEmptyState<Action: View>: View {
 
     public var body: some View {
         VStack(spacing: MSSpacing.lg) {
-            MSIllustrationView(illustration)
+            StateArtView(art)
             VStack(spacing: MSSpacing.sm) {
                 Text(title)
                     .font(MSFont.title)
@@ -174,8 +174,8 @@ public struct MSEmptyState<Action: View>: View {
 }
 
 public extension MSEmptyState where Action == EmptyView {
-    init(_ illustration: MSIllustration, title: String, message: String) {
-        self.init(illustration, title: title, message: message) { EmptyView() }
+    init(_ art: StateArt, title: String, message: String) {
+        self.init(art, title: title, message: message) { EmptyView() }
     }
 }
 
@@ -195,7 +195,7 @@ public extension MSEmptyState where Action == EmptyView {
 
 #Preview("Empty state") {
     MSEmptyState(
-        .noMaps,
+        StateArt.noMaps,
         title: "No maps yet",
         message: "Scan a space with the MultiSet app, or upload a point cloud in the developer portal."
     ) {

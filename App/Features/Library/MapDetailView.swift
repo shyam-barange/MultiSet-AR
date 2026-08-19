@@ -227,7 +227,7 @@ struct MapDetailView: View {
 
     private func errorState(_ error: MultiSetError) -> some View {
         VStack(spacing: MSSpacing.lg) {
-            MSIllustrationView(.invalidated)
+            StateArtView(.experienceEnded, tint: MSColor.textMuted)
             Text(error.errorDescription ?? "")
                 .font(MSFont.callout)
                 .foregroundStyle(MSColor.textSecondary)

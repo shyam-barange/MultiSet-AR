@@ -27,38 +27,108 @@ kept as design source but are **not** in either shipping asset catalog: the
 `Canvas` implementation is parameterised — the searching state converges as
 attempts accumulate — and it costs no catalog bytes.
 
-## Photographic imagery — `ProductionAssets/`
+## Where each asset lives
 
-Produced to the direction in `Assets/multiset-ar-asset-production-brief.md` on
-2026-08-19 with OpenAI's built-in image-generation tool. The tool did not expose
-a reproducible seed. No third-party reference photography was used.
+One rule, so a reference never resolves against the wrong bundle:
+
+| Kind | Catalog | Bundle | Referenced from |
+|---|---|---|---|
+| Onboarding, Learn imagery | `App/Resources/Assets.xcassets/{Onboarding,Learn}/` | app target | `App/Features/` only |
+| State illustrations | `Packages/MultiSetUI/…/Resources/StateArt.xcassets` | `Bundle.module` | anywhere, incl. the Clip |
+| App icon | both targets' `AppIcon.appiconset` | app + Clip | — |
+
+Assets in a target are invisible to views defined in a package, so anything both
+the app and the Clip render has to live in `MultiSetUI`. Everything is reached
+through the typed accessors in
+`MultiSetUI/Tokens/AssetCatalog.swift` — `OnboardingImage`, `LearnImage`,
+`StateArt` — never by string. `AssetCatalogTests` iterates every case and asserts
+it loads, which catches a rename or a missing target membership at test time
+instead of as a blank rectangle in a demo.
+
+There is exactly one catalog per target. A second catalog with an ambiguous name
+was retired because it invited the one-click mistake of adding it to both
+targets' membership, which pushes 14 MB of content imagery into the Clip.
+
+## Photographic imagery
+
+Produced to the direction in `Assets/multiset-ar-asset-production-brief.md`.
 
 | | |
 |---|---|
-| Ships as | `ProductionAssets/MultiSetProductionAssets.xcassets`, in the **App target only** |
-| Contents | 3 onboarding illustrations + 6 Learn capability cards, light and dark each |
-| Format | HEIC, per the brief's format note |
-| Onboarding | 1290² · `OnboardingMap`, `OnboardingLocalize`, `OnboardingGuide` |
-| Learn | 1600×1000 · `LearnVPS`, `LearnObjectTracking`, `LearnMapping`, `LearnE57`, `Learn3DGS`, `Learn360` |
-| Clip card header | `ProductionAssets/Optimized/Clip/clip-card-header.heic`, 3000×2000. **Uploaded to App Store Connect, never bundled** — the Clip's catalog stays at an icon set alone. |
-| Style anchor | `ProductionAssets/Raster/Clip/clip-card-header-source.png` |
-| Prompt record | `ProductionAssets/Prompts/final-prompts.md` records the final prompt set and edit chain; the TSV files map generator outputs |
+| Onboarding | 1290² · `onboarding-01-map`, `-02-localize`, `-03-guide` |
+| Learn | 1600×1000 · `learn-vps`, `-object-tracking`, `-mapping`, `-e57`, `-3dgs`, `-360` |
+| Format | HEIC, single scale, light in **Any** + dark in **Dark** on one image set |
+| Clip card header | `ProductionAssets/Optimized/Clip/clip-card-header.heic`, 3000×2000. **App Store Connect upload, never bundled** — verified absent from both build products by `Scripts/check-bundled-assets.sh`. |
+| Provenance | `ProductionAssets/Prompts/` |
 
-Both view layers fall back to the geometric illustration family if a named image
-is missing, so a dropped asset degrades instead of leaving a blank card.
+Light and dark are appearance variants of one named set, not two named images, so
+`OnboardingImage.map.image` resolves correctly everywhere — including in
+`UIImage(named:)` bridges — without any view consulting `colorScheme`.
 
-### Compression results
+### HEIC vs PNG — measured, not assumed
 
-| Group | Largest final file | Budget |
-|---|---:|---:|
-| Onboarding | 204,773 B | 400 KB each |
-| Learn | 270,535 B | 300 KB each |
-| Clip header | 338,414 B | 2 MB |
+The integration brief asked to verify the HEIC-in-catalog path and fall back to
+the PNG masters if it misbehaved. It does not misbehave, and the fallback would be
+worse:
 
-`ProductionAssets/Raster/` contains the full-resolution PNG masters. The HEIC
-derivatives and appearance-aware catalog are the shipping copies. Moving the PNG
-masters to Git LFS remains a repository-owner decision because that can rewrite
-history.
+| Source | `Assets.car` for 2 sets | Encodings emitted |
+|---|---|---|
+| **HEIC** (shipping) | **4.8 MB** | HEIF + RGB555/lzfse |
+| PNG masters | 6.5 MB | ARGB only, no HEIF path |
+
+The catalog emits two representations per image: the original HEIF (3.5 MB across
+all 18) plus an RGB555 + lzfse fallback (17.8 MB). `ASSETCATALOG_COMPILER_OPTIMIZATION`
+set to `space` or `time` changes neither.
+
+RGB555 is 15-bit colour, which would band on these gradients — so quality was
+checked rather than assumed. Distinct colour levels in the rendered image measured
+**R=132 G=131 B=129**; RGB555 would cap each channel at 32. iOS renders the HEIF
+representation, and the RGB555 entries are unused weight rather than a quality
+path.
+
+### On-Demand Resources
+
+The six Learn sets carry `on-demand-resource-tags: ["learn-content"]`. Nothing on
+first launch needs them, and they are most of the catalog:
+
+| | Before ODR | After ODR |
+|---|---|---|
+| App `.app` (Release, device) | 31 MB | **18 MB** |
+| Main `Assets.car` | 21 MB | **7.4 MB** |
+| `learn-content.assetpack` | — | 14 MB, fetched on demand |
+
+Onboarding and the state art stay in the bundle: both are needed immediately,
+possibly before there is a network.
+
+**A fetch can fail, so failure is a first-class state.** The Learn cards fall back
+to text-only and show a notice with a retry, verified in both configurations.
+Whether the artwork draws is decided by the asset itself (`isFullyLoaded`), not by
+the loader's state — a tagged asset leaves a small stub in the main catalog, so
+`UIImage(named:)` succeeding is not proof the pack arrived, and a build with the
+tags removed must still show its bundled images.
+
+**Simulator caveat:** a bare `xcodebuild` + `simctl install` cannot serve the asset
+pack, so the Learn tab shows the fallback. Running from Xcode, TestFlight, or the
+App Store resolves it. This is expected, not a defect.
+
+## State illustrations
+
+The four SVGs from `ProductionAssets/Vector/EmptyStates/` ship in
+`MultiSetUI/Resources/StateArt.xcassets`, each configured **Single Scale**,
+**Preserve Vector Data**, and **Template Image** — so they scale with Dynamic Type
+without blurring and take `.foregroundStyle()`, including the venue accent the
+Clip injects from its manifest. `AssetCatalogTests` asserts the template rendering
+mode, because losing it makes every tint silently ineffective.
+
+Inspected for baked fills before switching to template mode: three carry
+`fill="#000"` and four `fill="none"`, all of which template rendering replaces
+cleanly.
+
+`state-searching` is also drawn procedurally in
+`MSIllustration.searching(progress:)`, and the AR coaching overlay uses that
+version rather than the vector — it converges as attempts accumulate, which a
+static asset cannot do, and it appears over a camera feed where an unchanging
+illustration reads as a hang. The vector is used for every static presentation.
 
 ## App icon
 

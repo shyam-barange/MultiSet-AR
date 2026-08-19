@@ -9,7 +9,7 @@ struct MapSetListView: View {
     var body: some View {
         ResourceList(
             list: list,
-            emptyIllustration: .noMaps,
+            emptyArt: .noMaps,
             emptyTitle: "No map sets yet",
             emptyMessage: "A map set stitches several maps into one coordinate system, so a whole building shares an origin."
         ) { mapSet in

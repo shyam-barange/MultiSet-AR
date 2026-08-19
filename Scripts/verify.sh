@@ -53,4 +53,7 @@ section "App Clip size gate"
 section "App Clip credential gate"
 ./Scripts/check-clip-secrets.sh
 
+section "Asset gates"
+./Scripts/check-bundled-assets.sh
+
 printf '\n\033[1;32mAll checks passed.\033[0m\n'

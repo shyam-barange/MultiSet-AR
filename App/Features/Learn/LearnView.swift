@@ -6,6 +6,7 @@ import SwiftUI
 /// and reads as filler.
 struct LearnView: View {
     @Environment(\.openURL) private var openURL
+    @StateObject private var imagery = OnDemandResourceLoader()
 
     var body: some View {
         NavigationStack {
@@ -22,6 +23,7 @@ struct LearnView: View {
             }
             .background(MSColor.background.ignoresSafeArea())
             .navigationTitle("Learn")
+            .task { await imagery.load() }
         }
     }
 
@@ -40,8 +42,35 @@ struct LearnView: View {
     private var capabilities: some View {
         VStack(alignment: .leading, spacing: MSSpacing.md) {
             MSSectionHeader("Technology")
+            if case .unavailable(let reason) = imagery.state,
+               !LearnImage.allCases.allSatisfy(\.isFullyLoaded) {
+                imageryUnavailableNotice(reason)
+            }
             ForEach(Capability.all) { capability in
                 capabilityCard(capability)
+            }
+        }
+    }
+
+    /// States what happened rather than leaving empty frames, and offers a retry.
+    private func imageryUnavailableNotice(_ reason: String) -> some View {
+        MSCard(padding: MSSpacing.md) {
+            HStack(alignment: .top, spacing: MSSpacing.sm) {
+                Image(systemName: "photo.badge.exclamationmark")
+                    .foregroundStyle(MSColor.warning)
+                VStack(alignment: .leading, spacing: MSSpacing.xs) {
+                    Text("Illustrations couldn't be downloaded")
+                        .font(MSFont.captionEmphasis)
+                        .foregroundStyle(MSColor.textPrimary)
+                    Text("Everything here still reads fine without them. \(reason)")
+                        .font(MSFont.caption)
+                        .foregroundStyle(MSColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button("Try again") { Task { await imagery.retry() } }
+                        .font(MSFont.captionEmphasis)
+                        .foregroundStyle(MSColor.accent)
+                        .frame(minHeight: MSSize.minTouchTarget, alignment: .leading)
+                }
             }
         }
     }
@@ -49,14 +78,7 @@ struct LearnView: View {
     private func capabilityCard(_ capability: Capability) -> some View {
         MSCard {
             VStack(alignment: .leading, spacing: MSSpacing.md) {
-                if let image = UIImage(named: capability.imageName) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(16 / 10, contentMode: .fill)
-                        .frame(maxWidth: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: MSRadius.md))
-                        .accessibilityHidden(true)
-                }
+                artwork(for: capability)
                 HStack(spacing: MSSpacing.md) {
                     Image(systemName: capability.symbolName)
                         .font(.system(size: 22, weight: .light))
@@ -91,6 +113,38 @@ struct LearnView: View {
                     .frame(minHeight: MSSize.minTouchTarget, alignment: .leading)
                 }
             }
+        }
+    }
+
+    /// A fixed aspect ratio with a clip, so the card layout does not shift if a
+    /// future asset ships at different dimensions.
+    /// The asset itself decides whether there is anything to draw, not the loader.
+    /// That keeps the card correct in all four combinations of "ODR configured" and
+    /// "fetch succeeded" — including a build with the tags removed, where the
+    /// images are simply in the bundle and no fetch is needed.
+    @ViewBuilder
+    private func artwork(for capability: Capability) -> some View {
+        if capability.artwork.isFullyLoaded, let image = capability.artwork.image {
+            image
+                .resizable()
+                .aspectRatio(16 / 10, contentMode: .fill)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: MSRadius.md))
+                // Decorative: the heading and explainer carry the meaning, so alt
+                // text would only duplicate them.
+                .accessibilityHidden(true)
+        } else if case .loading(let fraction) = imagery.state {
+            ZStack {
+                RoundedRectangle(cornerRadius: MSRadius.md)
+                    .fill(MSColor.surfaceSunken)
+                ProgressView(value: fraction)
+                    .progressViewStyle(.linear)
+                    .tint(MSColor.accent)
+                    .padding(.horizontal, MSSpacing.xxl)
+            }
+            .aspectRatio(16 / 10, contentMode: .fit)
+            .frame(maxWidth: .infinity)
+            .accessibilityLabel("Loading illustration")
         }
     }
 
@@ -228,7 +282,7 @@ struct Capability: Identifiable {
     let id: String
     let title: String
     let symbolName: String
-    let imageName: String
+    let artwork: LearnImage
     let explainer: String
     let facts: [(String, String)]
     let link: URL
@@ -238,7 +292,7 @@ struct Capability: Identifiable {
             id: "vps",
             title: "Visual Positioning System",
             symbolName: "scope",
-            imageName: "LearnVPS",
+            artwork: .vps,
             explainer: "Instant 6-DoF relocalization against a prebuilt map, holding accuracy through low light, glare, occlusion, and fast motion.",
             facts: [("ACCURACY", "≤ 5 cm"), ("RELOCK", "< 100 ms"), ("DRIFT", "< 0.1 % / min")],
             link: ExternalLink.vps
@@ -247,7 +301,7 @@ struct Capability: Identifiable {
             id: "object",
             title: "Object tracking",
             symbolName: "cube.transparent",
-            imageName: "LearnObjectTracking",
+            artwork: .objectTracking,
             explainer: "Recognises and tracks a specific physical object from any angle, so AR content can attach to equipment rather than to a room.",
             facts: [],
             link: ExternalLink.objectTracking
@@ -256,7 +310,7 @@ struct Capability: Identifiable {
             id: "mapping",
             title: "Mapping",
             symbolName: "square.stack.3d.down.right",
-            imageName: "LearnMapping",
+            artwork: .mapping,
             explainer: "Scan-agnostic: LiDAR, point clouds, textured meshes, Gaussian splats, 360° video, or an iPhone scan. Changing capture tool never means re-scanning.",
             facts: [],
             link: ExternalLink.mapping
@@ -265,7 +319,7 @@ struct Capability: Identifiable {
             id: "e57",
             title: "E57 → VPS",
             symbolName: "point.3.connected.trianglepath.dotted",
-            imageName: "LearnE57",
+            artwork: .e57,
             explainer: "Turn an existing survey-grade E57 point cloud into a localizable map, without capturing the site again.",
             facts: [],
             link: ExternalLink.e57ToVPS
@@ -274,7 +328,7 @@ struct Capability: Identifiable {
             id: "3dgs",
             title: "3DGS → VPS",
             symbolName: "sparkles",
-            imageName: "Learn3DGS",
+            artwork: .gaussianSplat,
             explainer: "Use a Gaussian splat reconstruction as the basis for localization, keeping its visual fidelity.",
             facts: [],
             link: ExternalLink.gaussianSplatToVPS
@@ -283,7 +337,7 @@ struct Capability: Identifiable {
             id: "360",
             title: "360 → VPS",
             symbolName: "pano",
-            imageName: "Learn360",
+            artwork: .panorama,
             explainer: "Build a map from 360° imagery — the fastest way to cover a large interior.",
             facts: [],
             link: ExternalLink.panoramaToVPS

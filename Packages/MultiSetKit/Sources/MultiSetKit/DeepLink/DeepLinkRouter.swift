@@ -7,6 +7,8 @@ public enum DeepLinkDestination: Sendable, Equatable {
     case object(code: String)
     case demo(DemoKind)
     case signIn
+    /// Internal navigation to a top-level tab.
+    case tab(String)
 
     public enum DemoKind: String, Sendable, CaseIterable {
         case objectTracking
@@ -84,6 +86,8 @@ public struct DeepLinkRouter: Sendable {
         switch route {
         case "signin":
             return .signIn
+        case "home", "library", "publish", "learn", "settings":
+            return .tab(route)
         case "demo":
             guard segments.count >= 2,
                   let kind = DeepLinkDestination.DemoKind(rawValue: segments[1])

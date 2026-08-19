@@ -9,7 +9,7 @@ struct ObjectListView: View {
     var body: some View {
         ResourceList(
             list: list,
-            emptyIllustration: .noObjects,
+            emptyArt: .noObjects,
             emptyTitle: "No tracked objects yet",
             emptyMessage: "Upload a model in the developer portal and MultiSet will recognise the physical object from any angle."
         ) { object in

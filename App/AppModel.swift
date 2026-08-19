@@ -47,6 +47,16 @@ final class AppModel: ObservableObject {
         let store = auth ?? AuthStore(environment: environment)
         self.auth = store
         self.api = api ?? LiveMultiSetAPI(environment: environment, auth: store)
+
+        #if DEBUG
+        // Lets a UI check open straight onto a tab:
+        //   xcrun simctl launch <device> com.multiset.sdk -MSStartTab learn
+        // Debug only, so it cannot affect a shipping build.
+        if let name = UserDefaults.standard.string(forKey: "MSStartTab"),
+           let tab = RootTab(rawValue: name) {
+            selectedTab = tab
+        }
+        #endif
     }
 
     private static let onboardingKey = "com.multiset.sdk.hasCompletedOnboarding"
@@ -167,6 +177,10 @@ final class AppModel: ObservableObject {
             pendingDestination = destination
         case .signIn:
             pendingDestination = destination
+        case .tab(let name):
+            if let tab = RootTab(rawValue: name) {
+                selectedTab = tab
+            }
         }
     }
 

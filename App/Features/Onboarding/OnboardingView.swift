@@ -8,28 +8,28 @@ struct OnboardingView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private struct Card {
-        let imageName: String
-        let illustration: MSIllustration
+        let artwork: OnboardingImage
+        let fallback: StateArt
         let headline: String
         let body: String
     }
 
     private let cards = [
         Card(
-            imageName: "OnboardingMap",
-            illustration: .noMaps,
+            artwork: .map,
+            fallback: .noMaps,
             headline: "Your space, mapped",
             body: "MultiSet turns a scan of a building into spatial ground truth — a map any camera can recognise."
         ),
         Card(
-            imageName: "OnboardingLocalize",
-            illustration: .searching(progress: 0.85),
+            artwork: .localize,
+            fallback: .searching,
             headline: "The phone knows where it is",
             body: "Point the camera at the room and VPS works out exactly where you're standing, to within five centimetres."
         ),
         Card(
-            imageName: "OnboardingGuide",
-            illustration: .noObjects,
+            artwork: .guide,
+            fallback: .noObjects,
             headline: "Hand it to a stranger",
             body: "Publish an experience, print the code, and anyone can scan it and follow the line. No install, no account."
         )
@@ -93,8 +93,8 @@ struct OnboardingView: View {
     /// asset degrades rather than leaving a blank card.
     @ViewBuilder
     private func artwork(_ card: Card) -> some View {
-        if let image = UIImage(named: card.imageName) {
-            Image(uiImage: image)
+        if let image = card.artwork.image {
+            image
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(maxWidth: .infinity)
@@ -104,9 +104,11 @@ struct OnboardingView: View {
                     RoundedRectangle(cornerRadius: MSRadius.xl)
                         .strokeBorder(MSColor.borderSubtle, lineWidth: 1)
                 )
+                // Decorative: the headline carries the meaning, so alt text here
+                // would only repeat it.
                 .accessibilityHidden(true)
         } else {
-            MSIllustrationView(card.illustration, size: 180)
+            StateArtView(card.fallback, size: 180)
         }
     }
 }

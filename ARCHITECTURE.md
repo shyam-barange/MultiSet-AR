@@ -190,10 +190,17 @@ It is not one.
 
 Every AR overlay — path ribbon, chevrons, POI markers, object outlines, origin
 gizmo — is generated at runtime, and the Clip's asset catalog holds only an icon
-set and two colours. The photographic imagery in
-`ProductionAssets/MultiSetProductionAssets.xcassets` joins the **app target
-only**; the App Clip card header goes to App Store Connect rather than into the
-bundle. Verified by inspecting the compiled `Assets.car` of both bundles.
+set and two colours. The photographic imagery lives in the app target's catalog
+alone; the App Clip card header goes to App Store Connect rather than into any
+bundle. Both facts are gated by `Scripts/check-bundled-assets.sh`, which reads the
+compiled `Assets.car` of each product. Adding the shared catalog to the Clip's
+membership takes the Clip from 3.3 MB to 24.6 MB — past Apple's 15 MB limit — so
+the gate was self-tested by deliberately making that mistake and confirming it
+fires.
+
+Asset layout, the HEIC-versus-PNG measurement, and the On-Demand Resources split
+that takes the app from 31 MB to 18 MB are documented in
+[ASSETS.md](ASSETS.md).
 
 ### Clip surface — known limitation
 

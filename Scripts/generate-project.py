@@ -53,13 +53,10 @@ def swift_sources(relative_dir):
 APP_SOURCES = swift_sources("App")
 CLIP_SOURCES = swift_sources("Clip")
 
-APP_RESOURCES = [
-    "App/Resources/Assets.xcassets",
-    "App/Resources/PrivacyInfo.xcprivacy",
-    # Photographic imagery for onboarding and the Learn tab. App target only:
-    # the Clip's asset catalog stays at an icon set alone.
-    "ProductionAssets/MultiSetProductionAssets.xcassets",
-]
+# The photographic imagery lives inside App/Resources/Assets.xcassets under
+# Onboarding/ and Learn/. A second catalog invited exactly the target-membership
+# mistake that would push content assets into the Clip, so there is only one.
+APP_RESOURCES = ["App/Resources/Assets.xcassets", "App/Resources/PrivacyInfo.xcprivacy"]
 CLIP_RESOURCES = ["Clip/Assets.xcassets", "Clip/PrivacyInfo.xcprivacy"]
 
 XCCONFIGS = [

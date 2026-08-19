@@ -118,7 +118,7 @@ public struct ARExperienceOverlay: View {
 
     private func failurePanel(_ error: MultiSetError) -> some View {
         VStack(spacing: MSSpacing.lg) {
-            MSIllustrationView(.invalidated, size: 88).colorScheme(.dark)
+            StateArtView(.experienceEnded, size: 88, tint: MSColor.AR.text)
             Text(error.errorDescription ?? "Something stopped the session.")
                 .font(MSFont.callout)
                 .foregroundStyle(MSColor.AR.text)

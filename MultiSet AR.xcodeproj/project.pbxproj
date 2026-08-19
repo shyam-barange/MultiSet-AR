@@ -7,141 +7,93 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B12FBEEE9BD11D2891E50F5 /* MultiSetUI in Frameworks */ = {isa = PBXBuildFile; productRef = E4EFEC51D23CA133B2BB5F4E /* MultiSetUI */; };
-		14B4CEB3F4779D00B198C31F /* ClipShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE2FA949DDC50B6F52CA6E8 /* ClipShellView.swift */; };
-		16A785242B490F0301E86AF1 /* ExperienceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E341DE8B84FFBFE898D5A80 /* ExperienceDetailView.swift */; };
-		1FFDAA0FC46C71B527B64E9A /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F506D1B146A646479E2DE93D /* AppModel.swift */; };
-		2428F3A6CF38DB0A540D1D16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2910752274DB8F8E5BDD359C /* Assets.xcassets */; };
-		2B7B8823208F8CC769A2061E /* QRScannerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA1A5B0FECFBA131622DAC3 /* QRScannerSheet.swift */; };
-		35AD6A0120BDCD6D13C9CC30 /* ExperienceRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5F7B8C2D84EFD286A1EE5F /* ExperienceRunner.swift */; };
-		35B2C95F787154D1912032A2 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2047FE1D8E25EC3391396C24 /* LibraryView.swift */; };
-		3D74A9A0DD7395AEB7F18266 /* PublishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17F8A905B64FE1B66B48B8A /* PublishView.swift */; };
-		3D7D36362185B80541A4AEBB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B13BBE9B110A4FBCB7A820A /* Assets.xcassets */; };
-		4128B748CEDAC807A85F3A94 /* MultiSetARClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC70FE1F40887D5FE5AB724 /* MultiSetARClipApp.swift */; };
-		498EBBFE6DD48011D448D7E0 /* MultiSetProductionAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC2589954079FA34B93E028E /* MultiSetProductionAssets.xcassets */; };
-		50DE9531FBC83DC549BEB85C /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5AF5F65D9FD61B2B7AD76D /* SignInView.swift */; };
-		52410445CF1CC2FFF29130AD /* MultiSetARApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7F7EBF2BF583125FA3B233 /* MultiSetARApp.swift */; };
-		5931443F7263A001472E4255 /* DemoRunnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C35E1C3F6B202334F4DB69F /* DemoRunnerView.swift */; };
-		5FD3DC5B31768E63EEC27CA1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C40CC6B5B196CCC47BD61970 /* PrivacyInfo.xcprivacy */; };
-		6BEDE9B95042E55510F4C135 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 218BB94ACFDF91CCB91A454D /* PrivacyInfo.xcprivacy */; };
-		6E65DC9BEF591CB6593DD574 /* MultiSetKit in Frameworks */ = {isa = PBXBuildFile; productRef = CBD44AE9BC67ED3EA5190D0D /* MultiSetKit */; };
-		6F43CDA31999717341202A67 /* ShowcaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A835F1626D9DD4CBD145D66 /* ShowcaseView.swift */; };
-		721B9C608B2F9B23FDC3B03D /* PublishFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFFF88AA210F3EF5788AB94 /* PublishFormView.swift */; };
-		7742E1525DB122603E7041A5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440866A12C9D5DC2B9DEED4 /* SettingsView.swift */; };
-		80395AAAEA6DEF029EDF1CAA /* LearnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D388A3BB756C7337EC8D9144 /* LearnView.swift */; };
-		821E3974A4928867253DC62E /* MultiSetARCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1064ECF73AE6194090E1AA9B /* MultiSetARCore */; };
-		823C1D03B5EDB7DA3AA04EA3 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F239469028C2D6352E473DFF /* OnboardingView.swift */; };
-		82A2C1CC4C7FF6EE87DB157B /* ObjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91760E5FA4AB20DC4C7EEEF5 /* ObjectDetailView.swift */; };
-		84B512064F1A77344356D987 /* MapSetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E855D8D20CDE542A07C641 /* MapSetListView.swift */; };
-		8603B95DD95F6EFABFE62070 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9740592B2DED838BB7058B0A /* HomeView.swift */; };
-		8C09117215B07B3C4ADFE184 /* MultiSetSDKBinary in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6453C791B27B8D811FD762 /* MultiSetSDKBinary */; };
-		948DDEFB3882788FEF6FC296 /* ObjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E89235F173118292224F3FE /* ObjectListView.swift */; };
-		A1891ACC94D0A03C44BA08F5 /* DemoKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E05602B783BC753B3BA3BD /* DemoKind.swift */; };
-		AEAC21D3E534075456A77E6D /* ClipModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8611612BACA1836759DC6079 /* ClipModel.swift */; };
-		BCAA26D657C80A949B472969 /* SDKPoseProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0815DC263DFC065F944D7CAB /* SDKPoseProvider.swift */; };
-		CABCD91B85B9379D5647C020 /* MapDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170E066B9867F596AEA6688 /* MapDetailView.swift */; };
-		CED05BC8F12E608665453BB7 /* MultiSetKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5834E7456808B30907ACE7BC /* MultiSetKit */; };
+		14B4CEB3F4779D00B198C31F /* ClipShellView.swift in clip */ = {isa = PBXBuildFile; fileRef = 3BE2FA949DDC50B6F52CA6E8 /* ClipShellView.swift */; };
+		16A785242B490F0301E86AF1 /* ExperienceDetailView.swift in app */ = {isa = PBXBuildFile; fileRef = 7E341DE8B84FFBFE898D5A80 /* ExperienceDetailView.swift */; };
+		1FFDAA0FC46C71B527B64E9A /* AppModel.swift in app */ = {isa = PBXBuildFile; fileRef = F506D1B146A646479E2DE93D /* AppModel.swift */; };
+		2428F3A6CF38DB0A540D1D16 /* Assets.xcassets in app */ = {isa = PBXBuildFile; fileRef = 2910752274DB8F8E5BDD359C /* Assets.xcassets */; };
+		2B7B8823208F8CC769A2061E /* QRScannerSheet.swift in app */ = {isa = PBXBuildFile; fileRef = 5EA1A5B0FECFBA131622DAC3 /* QRScannerSheet.swift */; };
+		35AD6A0120BDCD6D13C9CC30 /* ExperienceRunner.swift in app */ = {isa = PBXBuildFile; fileRef = BE5F7B8C2D84EFD286A1EE5F /* ExperienceRunner.swift */; };
+		35B2C95F787154D1912032A2 /* LibraryView.swift in app */ = {isa = PBXBuildFile; fileRef = 2047FE1D8E25EC3391396C24 /* LibraryView.swift */; };
+		3D74A9A0DD7395AEB7F18266 /* PublishView.swift in app */ = {isa = PBXBuildFile; fileRef = C17F8A905B64FE1B66B48B8A /* PublishView.swift */; };
+		3D7D36362185B80541A4AEBB /* Assets.xcassets in clip */ = {isa = PBXBuildFile; fileRef = 7B13BBE9B110A4FBCB7A820A /* Assets.xcassets */; };
+		4128B748CEDAC807A85F3A94 /* MultiSetARClipApp.swift in clip */ = {isa = PBXBuildFile; fileRef = 5EC70FE1F40887D5FE5AB724 /* MultiSetARClipApp.swift */; };
+		50DE9531FBC83DC549BEB85C /* SignInView.swift in app */ = {isa = PBXBuildFile; fileRef = DD5AF5F65D9FD61B2B7AD76D /* SignInView.swift */; };
+		52410445CF1CC2FFF29130AD /* MultiSetARApp.swift in app */ = {isa = PBXBuildFile; fileRef = 7F7F7EBF2BF583125FA3B233 /* MultiSetARApp.swift */; };
+		5931443F7263A001472E4255 /* DemoRunnerView.swift in app */ = {isa = PBXBuildFile; fileRef = 1C35E1C3F6B202334F4DB69F /* DemoRunnerView.swift */; };
+		5FD3DC5B31768E63EEC27CA1 /* PrivacyInfo.xcprivacy in app */ = {isa = PBXBuildFile; fileRef = C40CC6B5B196CCC47BD61970 /* PrivacyInfo.xcprivacy */; };
+		6BEDE9B95042E55510F4C135 /* PrivacyInfo.xcprivacy in clip */ = {isa = PBXBuildFile; fileRef = 218BB94ACFDF91CCB91A454D /* PrivacyInfo.xcprivacy */; };
+		6F43CDA31999717341202A67 /* ShowcaseView.swift in app */ = {isa = PBXBuildFile; fileRef = 0A835F1626D9DD4CBD145D66 /* ShowcaseView.swift */; };
+		721B9C608B2F9B23FDC3B03D /* PublishFormView.swift in app */ = {isa = PBXBuildFile; fileRef = 5EFFF88AA210F3EF5788AB94 /* PublishFormView.swift */; };
+		7742E1525DB122603E7041A5 /* SettingsView.swift in app */ = {isa = PBXBuildFile; fileRef = 8440866A12C9D5DC2B9DEED4 /* SettingsView.swift */; };
+		80395AAAEA6DEF029EDF1CAA /* LearnView.swift in app */ = {isa = PBXBuildFile; fileRef = D388A3BB756C7337EC8D9144 /* LearnView.swift */; };
+		823C1D03B5EDB7DA3AA04EA3 /* OnboardingView.swift in app */ = {isa = PBXBuildFile; fileRef = F239469028C2D6352E473DFF /* OnboardingView.swift */; };
+		82A2C1CC4C7FF6EE87DB157B /* ObjectDetailView.swift in app */ = {isa = PBXBuildFile; fileRef = 91760E5FA4AB20DC4C7EEEF5 /* ObjectDetailView.swift */; };
+		84B512064F1A77344356D987 /* MapSetListView.swift in app */ = {isa = PBXBuildFile; fileRef = 50E855D8D20CDE542A07C641 /* MapSetListView.swift */; };
+		8603B95DD95F6EFABFE62070 /* HomeView.swift in app */ = {isa = PBXBuildFile; fileRef = 9740592B2DED838BB7058B0A /* HomeView.swift */; };
+		948DDEFB3882788FEF6FC296 /* ObjectListView.swift in app */ = {isa = PBXBuildFile; fileRef = 2E89235F173118292224F3FE /* ObjectListView.swift */; };
+		9A4890FEF411237E85B7AD66 /* OnDemandResources.swift in app */ = {isa = PBXBuildFile; fileRef = D5BF17CAD992F5B2640F711A /* OnDemandResources.swift */; };
+		A1891ACC94D0A03C44BA08F5 /* DemoKind.swift in app */ = {isa = PBXBuildFile; fileRef = 77E05602B783BC753B3BA3BD /* DemoKind.swift */; };
+		AEAC21D3E534075456A77E6D /* ClipModel.swift in clip */ = {isa = PBXBuildFile; fileRef = 8611612BACA1836759DC6079 /* ClipModel.swift */; };
+		BCAA26D657C80A949B472969 /* SDKPoseProvider.swift in app */ = {isa = PBXBuildFile; fileRef = 0815DC263DFC065F944D7CAB /* SDKPoseProvider.swift */; };
+		CABCD91B85B9379D5647C020 /* MapDetailView.swift in app */ = {isa = PBXBuildFile; fileRef = E170E066B9867F596AEA6688 /* MapDetailView.swift */; };
+		E0CFA8398C11CF7925D2E521 /* QRCode.swift in app */ = {isa = PBXBuildFile; fileRef = 9BCBE032C8B61FC5C4FC3412 /* QRCode.swift */; };
+		E7415B2C560B54604E6C915A /* RootView.swift in app */ = {isa = PBXBuildFile; fileRef = 1BF68FADE19102B313043C46 /* RootView.swift */; };
+		FFFCF91341581D602CCF5032 /* MapListView.swift in app */ = {isa = PBXBuildFile; fileRef = 9D8060E9D9F93DB0D73532B3 /* MapListView.swift */; };
+		0B12FBEEE9BD11D2891E50F5 /* MultiSetUI in clip */ = {isa = PBXBuildFile; productRef = E4EFEC51D23CA133B2BB5F4E /* MultiSetUI */; };
+		6E65DC9BEF591CB6593DD574 /* MultiSetKit in app */ = {isa = PBXBuildFile; productRef = CBD44AE9BC67ED3EA5190D0D /* MultiSetKit */; };
+		821E3974A4928867253DC62E /* MultiSetARCore in clip */ = {isa = PBXBuildFile; productRef = 1064ECF73AE6194090E1AA9B /* MultiSetARCore */; };
+		8C09117215B07B3C4ADFE184 /* MultiSetSDKBinary in app */ = {isa = PBXBuildFile; productRef = 5E6453C791B27B8D811FD762 /* MultiSetSDKBinary */; };
+		CED05BC8F12E608665453BB7 /* MultiSetKit in clip */ = {isa = PBXBuildFile; productRef = 5834E7456808B30907ACE7BC /* MultiSetKit */; };
+		F07339E9F288E2083DA6B272 /* MultiSetUI in app */ = {isa = PBXBuildFile; productRef = F576D0CF33A16C48524A8182 /* MultiSetUI */; };
+		F1E9DCEEFF2F262873EA2C5F /* MultiSetARCore in app */ = {isa = PBXBuildFile; productRef = 8EFCEF276F7BC6E045C92F3D /* MultiSetARCore */; };
 		E079DAE47ACB9BF2DA49DB9B /* MultiSet AR Clip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = F06557B78455BF326B33B8BB /* MultiSet AR Clip.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E0CFA8398C11CF7925D2E521 /* QRCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BCBE032C8B61FC5C4FC3412 /* QRCode.swift */; };
-		E7415B2C560B54604E6C915A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF68FADE19102B313043C46 /* RootView.swift */; };
-		F07339E9F288E2083DA6B272 /* MultiSetUI in Frameworks */ = {isa = PBXBuildFile; productRef = F576D0CF33A16C48524A8182 /* MultiSetUI */; };
-		F1E9DCEEFF2F262873EA2C5F /* MultiSetARCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8EFCEF276F7BC6E045C92F3D /* MultiSetARCore */; };
-		FFFCF91341581D602CCF5032 /* MapListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8060E9D9F93DB0D73532B3 /* MapListView.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		119CA161A63788B7A5C5CE86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 244210E48437B6556980A702 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 970D30D14D0BF2FFD203078F;
-			remoteInfo = "MultiSet AR Clip";
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		0C87990C027B6DE2D3B76F91 /* Embed App Clips */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
-			dstSubfolderSpec = 16;
-			files = (
-				E079DAE47ACB9BF2DA49DB9B /* MultiSet AR Clip.app in Embed App Clips */,
-			);
-			name = "Embed App Clips";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		06F7C1BE354C570210EA5997 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
-		074A3B28AF12B276DE6043C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0815DC263DFC065F944D7CAB /* SDKPoseProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKPoseProvider.swift; sourceTree = "<group>"; };
-		0A835F1626D9DD4CBD145D66 /* ShowcaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowcaseView.swift; sourceTree = "<group>"; };
-		0E6890B9743F6C10DF116464 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		06F7C1BE354C570210EA5997 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Release.xcconfig"; sourceTree = "<group>"; };
+		074A3B28AF12B276DE6043C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		0815DC263DFC065F944D7CAB /* SDKPoseProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDKPoseProvider.swift"; sourceTree = "<group>"; };
+		0A835F1626D9DD4CBD145D66 /* ShowcaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShowcaseView.swift"; sourceTree = "<group>"; };
+		0E6890B9743F6C10DF116464 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Debug.xcconfig"; sourceTree = "<group>"; };
+		1BF68FADE19102B313043C46 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootView.swift"; sourceTree = "<group>"; };
+		1C35E1C3F6B202334F4DB69F /* DemoRunnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoRunnerView.swift"; sourceTree = "<group>"; };
+		2047FE1D8E25EC3391396C24 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LibraryView.swift"; sourceTree = "<group>"; };
+		218BB94ACFDF91CCB91A454D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivacyInfo.xcprivacy"; sourceTree = "<group>"; };
+		2910752274DB8F8E5BDD359C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
+		2E89235F173118292224F3FE /* ObjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObjectListView.swift"; sourceTree = "<group>"; };
+		3BE2FA949DDC50B6F52CA6E8 /* ClipShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClipShellView.swift"; sourceTree = "<group>"; };
+		50E855D8D20CDE542A07C641 /* MapSetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapSetListView.swift"; sourceTree = "<group>"; };
+		5EA1A5B0FECFBA131622DAC3 /* QRScannerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QRScannerSheet.swift"; sourceTree = "<group>"; };
+		5EC70FE1F40887D5FE5AB724 /* MultiSetARClipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MultiSetARClipApp.swift"; sourceTree = "<group>"; };
+		5EFFF88AA210F3EF5788AB94 /* PublishFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PublishFormView.swift"; sourceTree = "<group>"; };
+		6B1F44C38BB2935703137CBE /* MultiSetAR.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "MultiSetAR.entitlements"; sourceTree = "<group>"; };
+		75B075407F6FE7E194F2BFB3 /* Clip.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Clip.xcconfig"; sourceTree = "<group>"; };
+		77E05602B783BC753B3BA3BD /* DemoKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoKind.swift"; sourceTree = "<group>"; };
+		7B13BBE9B110A4FBCB7A820A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
+		7E341DE8B84FFBFE898D5A80 /* ExperienceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExperienceDetailView.swift"; sourceTree = "<group>"; };
+		7F7F7EBF2BF583125FA3B233 /* MultiSetARApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MultiSetARApp.swift"; sourceTree = "<group>"; };
+		8323649DE689A8585A141A66 /* MultiSetARClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "MultiSetARClip.entitlements"; sourceTree = "<group>"; };
+		8440866A12C9D5DC2B9DEED4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView.swift"; sourceTree = "<group>"; };
+		8611612BACA1836759DC6079 /* ClipModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClipModel.swift"; sourceTree = "<group>"; };
+		91760E5FA4AB20DC4C7EEEF5 /* ObjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObjectDetailView.swift"; sourceTree = "<group>"; };
+		9740592B2DED838BB7058B0A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeView.swift"; sourceTree = "<group>"; };
+		9BCBE032C8B61FC5C4FC3412 /* QRCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QRCode.swift"; sourceTree = "<group>"; };
+		9D8060E9D9F93DB0D73532B3 /* MapListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapListView.swift"; sourceTree = "<group>"; };
+		A01518FE3E00B494F446F9C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		BE5F7B8C2D84EFD286A1EE5F /* ExperienceRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExperienceRunner.swift"; sourceTree = "<group>"; };
+		C1417F859A41C5F744483E51 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Shared.xcconfig"; sourceTree = "<group>"; };
+		C17F8A905B64FE1B66B48B8A /* PublishView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PublishView.swift"; sourceTree = "<group>"; };
+		C40CC6B5B196CCC47BD61970 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivacyInfo.xcprivacy"; sourceTree = "<group>"; };
+		D388A3BB756C7337EC8D9144 /* LearnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LearnView.swift"; sourceTree = "<group>"; };
+		D5BF17CAD992F5B2640F711A /* OnDemandResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnDemandResources.swift"; sourceTree = "<group>"; };
+		DD5AF5F65D9FD61B2B7AD76D /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignInView.swift"; sourceTree = "<group>"; };
+		E170E066B9867F596AEA6688 /* MapDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapDetailView.swift"; sourceTree = "<group>"; };
+		F239469028C2D6352E473DFF /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingView.swift"; sourceTree = "<group>"; };
+		F23C138F529C575808984702 /* App.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "App.xcconfig"; sourceTree = "<group>"; };
+		F506D1B146A646479E2DE93D /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppModel.swift"; sourceTree = "<group>"; };
 		19163E4DB25873B65B6F241E /* MultiSet AR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MultiSet AR.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1BF68FADE19102B313043C46 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		1C35E1C3F6B202334F4DB69F /* DemoRunnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoRunnerView.swift; sourceTree = "<group>"; };
-		2047FE1D8E25EC3391396C24 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
-		218BB94ACFDF91CCB91A454D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		2910752274DB8F8E5BDD359C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		2E89235F173118292224F3FE /* ObjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectListView.swift; sourceTree = "<group>"; };
-		3BE2FA949DDC50B6F52CA6E8 /* ClipShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipShellView.swift; sourceTree = "<group>"; };
-		50E855D8D20CDE542A07C641 /* MapSetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSetListView.swift; sourceTree = "<group>"; };
-		5EA1A5B0FECFBA131622DAC3 /* QRScannerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerSheet.swift; sourceTree = "<group>"; };
-		5EC70FE1F40887D5FE5AB724 /* MultiSetARClipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSetARClipApp.swift; sourceTree = "<group>"; };
-		5EFFF88AA210F3EF5788AB94 /* PublishFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishFormView.swift; sourceTree = "<group>"; };
-		6B1F44C38BB2935703137CBE /* MultiSetAR.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MultiSetAR.entitlements; sourceTree = "<group>"; };
-		75B075407F6FE7E194F2BFB3 /* Clip.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Clip.xcconfig; sourceTree = "<group>"; };
-		77E05602B783BC753B3BA3BD /* DemoKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoKind.swift; sourceTree = "<group>"; };
-		7B13BBE9B110A4FBCB7A820A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		7E341DE8B84FFBFE898D5A80 /* ExperienceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceDetailView.swift; sourceTree = "<group>"; };
-		7F7F7EBF2BF583125FA3B233 /* MultiSetARApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSetARApp.swift; sourceTree = "<group>"; };
-		8323649DE689A8585A141A66 /* MultiSetARClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MultiSetARClip.entitlements; sourceTree = "<group>"; };
-		8440866A12C9D5DC2B9DEED4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		8611612BACA1836759DC6079 /* ClipModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipModel.swift; sourceTree = "<group>"; };
-		91760E5FA4AB20DC4C7EEEF5 /* ObjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetailView.swift; sourceTree = "<group>"; };
-		9740592B2DED838BB7058B0A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		9BCBE032C8B61FC5C4FC3412 /* QRCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCode.swift; sourceTree = "<group>"; };
-		9D8060E9D9F93DB0D73532B3 /* MapListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapListView.swift; sourceTree = "<group>"; };
-		A01518FE3E00B494F446F9C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BE5F7B8C2D84EFD286A1EE5F /* ExperienceRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceRunner.swift; sourceTree = "<group>"; };
-		C1417F859A41C5F744483E51 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		C17F8A905B64FE1B66B48B8A /* PublishView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishView.swift; sourceTree = "<group>"; };
-		C40CC6B5B196CCC47BD61970 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		D388A3BB756C7337EC8D9144 /* LearnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnView.swift; sourceTree = "<group>"; };
-		DC2589954079FA34B93E028E /* MultiSetProductionAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = MultiSetProductionAssets.xcassets; sourceTree = "<group>"; };
-		DD5AF5F65D9FD61B2B7AD76D /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
-		E170E066B9867F596AEA6688 /* MapDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapDetailView.swift; sourceTree = "<group>"; };
 		F06557B78455BF326B33B8BB /* MultiSet AR Clip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MultiSet AR Clip.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F239469028C2D6352E473DFF /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
-		F23C138F529C575808984702 /* App.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = App.xcconfig; sourceTree = "<group>"; };
-		F506D1B146A646479E2DE93D /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		6F58A608AC664E62D7A67190 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CED05BC8F12E608665453BB7 /* MultiSetKit in Frameworks */,
-				0B12FBEEE9BD11D2891E50F5 /* MultiSetUI in Frameworks */,
-				821E3974A4928867253DC62E /* MultiSetARCore in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BF1C5A9E98A1E11C2A5A0702 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E65DC9BEF591CB6593DD574 /* MultiSetKit in Frameworks */,
-				F07339E9F288E2083DA6B272 /* MultiSetUI in Frameworks */,
-				F1E9DCEEFF2F262873EA2C5F /* MultiSetARCore in Frameworks */,
-				8C09117215B07B3C4ADFE184 /* MultiSetSDKBinary in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		007D3BF127B229951197B7FF /* Home */ = {
@@ -149,7 +101,7 @@
 			children = (
 				9740592B2DED838BB7058B0A /* HomeView.swift */,
 			);
-			path = Home;
+			path = "Home";
 			sourceTree = "<group>";
 		};
 		0CEA54BC6E21BA5F8B1AE50E /* Settings */ = {
@@ -157,7 +109,7 @@
 			children = (
 				8440866A12C9D5DC2B9DEED4 /* SettingsView.swift */,
 			);
-			path = Settings;
+			path = "Settings";
 			sourceTree = "<group>";
 		};
 		1AA06BFADBD024AF23C8A058 /* AR */ = {
@@ -166,7 +118,7 @@
 				BE5F7B8C2D84EFD286A1EE5F /* ExperienceRunner.swift */,
 				0815DC263DFC065F944D7CAB /* SDKPoseProvider.swift */,
 			);
-			path = AR;
+			path = "AR";
 			sourceTree = "<group>";
 		};
 		2DA1FB97560AB1976AA7F6BE /* Config */ = {
@@ -178,7 +130,7 @@
 				06F7C1BE354C570210EA5997 /* Release.xcconfig */,
 				C1417F859A41C5F744483E51 /* Shared.xcconfig */,
 			);
-			path = Config;
+			path = "Config";
 			sourceTree = "<group>";
 		};
 		39A3D4915EC41FCACF57D94B /* Demos */ = {
@@ -187,16 +139,15 @@
 				77E05602B783BC753B3BA3BD /* DemoKind.swift */,
 				1C35E1C3F6B202334F4DB69F /* DemoRunnerView.swift */,
 			);
-			path = Demos;
+			path = "Demos";
 			sourceTree = "<group>";
 		};
-		3B3CD63E49B8538E8FC904C6 = {
+		3B3CD63E49B8538E8FC904C6 /* MultiSet AR */ = {
 			isa = PBXGroup;
 			children = (
 				A0DBF427033C9DF3442BB773 /* App */,
 				FD06486254CC41CB9A5F434B /* Clip */,
 				2DA1FB97560AB1976AA7F6BE /* Config */,
-				E22314974A81D39EA3659B7A /* ProductionAssets */,
 				EC838BF479392FA8C7D80DC4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -211,7 +162,7 @@
 				91760E5FA4AB20DC4C7EEEF5 /* ObjectDetailView.swift */,
 				2E89235F173118292224F3FE /* ObjectListView.swift */,
 			);
-			path = Library;
+			path = "Library";
 			sourceTree = "<group>";
 		};
 		618997C6BAB0C402A25E14F8 /* Showcase */ = {
@@ -219,7 +170,7 @@
 			children = (
 				0A835F1626D9DD4CBD145D66 /* ShowcaseView.swift */,
 			);
-			path = Showcase;
+			path = "Showcase";
 			sourceTree = "<group>";
 		};
 		7053FC6DDBF5EF934068566B /* Auth */ = {
@@ -227,7 +178,7 @@
 			children = (
 				DD5AF5F65D9FD61B2B7AD76D /* SignInView.swift */,
 			);
-			path = Auth;
+			path = "Auth";
 			sourceTree = "<group>";
 		};
 		7491A8ED10DD28E7F61FCB87 /* Features */ = {
@@ -243,7 +194,7 @@
 				0CEA54BC6E21BA5F8B1AE50E /* Settings */,
 				618997C6BAB0C402A25E14F8 /* Showcase */,
 			);
-			path = Features;
+			path = "Features";
 			sourceTree = "<group>";
 		};
 		A0DBF427033C9DF3442BB773 /* App */ = {
@@ -257,16 +208,17 @@
 				7F7F7EBF2BF583125FA3B233 /* MultiSetARApp.swift */,
 				1BF68FADE19102B313043C46 /* RootView.swift */,
 			);
-			path = App;
+			path = "App";
 			sourceTree = "<group>";
 		};
 		BC07ABFE6EAA35EA9674DDF1 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				D5BF17CAD992F5B2640F711A /* OnDemandResources.swift */,
 				9BCBE032C8B61FC5C4FC3412 /* QRCode.swift */,
 				5EA1A5B0FECFBA131622DAC3 /* QRScannerSheet.swift */,
 			);
-			path = Support;
+			path = "Support";
 			sourceTree = "<group>";
 		};
 		CDE3BC9768E6A9BB6D777FF4 /* Resources */ = {
@@ -277,7 +229,7 @@
 				6B1F44C38BB2935703137CBE /* MultiSetAR.entitlements */,
 				C40CC6B5B196CCC47BD61970 /* PrivacyInfo.xcprivacy */,
 			);
-			path = Resources;
+			path = "Resources";
 			sourceTree = "<group>";
 		};
 		D5BF4D2939D3FB8F7A0E89B6 /* Publish */ = {
@@ -287,7 +239,7 @@
 				5EFFF88AA210F3EF5788AB94 /* PublishFormView.swift */,
 				C17F8A905B64FE1B66B48B8A /* PublishView.swift */,
 			);
-			path = Publish;
+			path = "Publish";
 			sourceTree = "<group>";
 		};
 		DB8F3D8620258316303832F9 /* Learn */ = {
@@ -295,15 +247,7 @@
 			children = (
 				D388A3BB756C7337EC8D9144 /* LearnView.swift */,
 			);
-			path = Learn;
-			sourceTree = "<group>";
-		};
-		E22314974A81D39EA3659B7A /* ProductionAssets */ = {
-			isa = PBXGroup;
-			children = (
-				DC2589954079FA34B93E028E /* MultiSetProductionAssets.xcassets */,
-			);
-			path = ProductionAssets;
+			path = "Learn";
 			sourceTree = "<group>";
 		};
 		E939335DD95EA76BE75A6D45 /* Onboarding */ = {
@@ -311,16 +255,7 @@
 			children = (
 				F239469028C2D6352E473DFF /* OnboardingView.swift */,
 			);
-			path = Onboarding;
-			sourceTree = "<group>";
-		};
-		EC838BF479392FA8C7D80DC4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				19163E4DB25873B65B6F241E /* MultiSet AR.app */,
-				F06557B78455BF326B33B8BB /* MultiSet AR Clip.app */,
-			);
-			name = Products;
+			path = "Onboarding";
 			sourceTree = "<group>";
 		};
 		FD06486254CC41CB9A5F434B /* Clip */ = {
@@ -334,110 +269,96 @@
 				5EC70FE1F40887D5FE5AB724 /* MultiSetARClipApp.swift */,
 				218BB94ACFDF91CCB91A454D /* PrivacyInfo.xcprivacy */,
 			);
-			path = Clip;
+			path = "Clip";
+			sourceTree = "<group>";
+		};
+		EC838BF479392FA8C7D80DC4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				19163E4DB25873B65B6F241E /* MultiSet AR.app */,
+				F06557B78455BF326B33B8BB /* MultiSet AR Clip.app */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
-/* Begin PBXNativeTarget section */
-		970D30D14D0BF2FFD203078F /* MultiSet AR Clip */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 842FB713BDA2369BA2D166FA /* Build configuration list for PBXNativeTarget "MultiSet AR Clip" */;
-			buildPhases = (
-				52DC0B9E130DD0A51A5C5B5F /* Sources */,
-				6F58A608AC664E62D7A67190 /* Frameworks */,
-				572D3338E7584B5F04AE9E9C /* Resources */,
+/* Begin PBXFrameworksBuildPhase section */
+		BF1C5A9E98A1E11C2A5A0702 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E65DC9BEF591CB6593DD574 /* MultiSetKit */,
+				F07339E9F288E2083DA6B272 /* MultiSetUI */,
+				F1E9DCEEFF2F262873EA2C5F /* MultiSetARCore */,
+				8C09117215B07B3C4ADFE184 /* MultiSetSDKBinary */,
 			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "MultiSet AR Clip";
-			packageProductDependencies = (
-				5834E7456808B30907ACE7BC /* MultiSetKit */,
-				E4EFEC51D23CA133B2BB5F4E /* MultiSetUI */,
-				1064ECF73AE6194090E1AA9B /* MultiSetARCore */,
-			);
-			productName = "MultiSet AR Clip";
-			productReference = F06557B78455BF326B33B8BB /* MultiSet AR Clip.app */;
-			productType = "com.apple.product-type.application.on-demand-install-capable";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9AA3943A86A18796A07E090B /* MultiSet AR */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1C7C416967B21982336E5666 /* Build configuration list for PBXNativeTarget "MultiSet AR" */;
-			buildPhases = (
-				936DB12268969D863D8636DF /* Sources */,
-				BF1C5A9E98A1E11C2A5A0702 /* Frameworks */,
-				28BEFC48F8E391FE25632526 /* Resources */,
-				0C87990C027B6DE2D3B76F91 /* Embed App Clips */,
+		6F58A608AC664E62D7A67190 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CED05BC8F12E608665453BB7 /* MultiSetKit */,
+				0B12FBEEE9BD11D2891E50F5 /* MultiSetUI */,
+				821E3974A4928867253DC62E /* MultiSetARCore */,
 			);
-			buildRules = (
-			);
-			dependencies = (
-				3BBEAB59CDFC433416BC65E6 /* PBXTargetDependency */,
-			);
-			name = "MultiSet AR";
-			packageProductDependencies = (
-				CBD44AE9BC67ED3EA5190D0D /* MultiSetKit */,
-				F576D0CF33A16C48524A8182 /* MultiSetUI */,
-				8EFCEF276F7BC6E045C92F3D /* MultiSetARCore */,
-				5E6453C791B27B8D811FD762 /* MultiSetSDKBinary */,
-			);
-			productName = "MultiSet AR";
-			productReference = 19163E4DB25873B65B6F241E /* MultiSet AR.app */;
-			productType = "com.apple.product-type.application";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXNativeTarget section */
+/* End PBXFrameworksBuildPhase section */
 
-/* Begin PBXProject section */
-		244210E48437B6556980A702 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2660;
-				LastUpgradeCheck = 2660;
-				TargetAttributes = {
-					970D30D14D0BF2FFD203078F = {
-						CreatedOnToolsVersion = 26.6;
-					};
-					9AA3943A86A18796A07E090B = {
-						CreatedOnToolsVersion = 26.6;
-					};
-				};
-			};
-			buildConfigurationList = 24425F783A562CA72CB87B70 /* Build configuration list for PBXProject "MultiSet AR" */;
-			developmentRegion = en;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-				Base,
+/* Begin PBXSourcesBuildPhase section */
+		936DB12268969D863D8636DF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35AD6A0120BDCD6D13C9CC30 /* ExperienceRunner.swift */,
+				BCAA26D657C80A949B472969 /* SDKPoseProvider.swift */,
+				1FFDAA0FC46C71B527B64E9A /* AppModel.swift */,
+				50DE9531FBC83DC549BEB85C /* SignInView.swift */,
+				A1891ACC94D0A03C44BA08F5 /* DemoKind.swift */,
+				5931443F7263A001472E4255 /* DemoRunnerView.swift */,
+				8603B95DD95F6EFABFE62070 /* HomeView.swift */,
+				80395AAAEA6DEF029EDF1CAA /* LearnView.swift */,
+				35B2C95F787154D1912032A2 /* LibraryView.swift */,
+				CABCD91B85B9379D5647C020 /* MapDetailView.swift */,
+				FFFCF91341581D602CCF5032 /* MapListView.swift */,
+				84B512064F1A77344356D987 /* MapSetListView.swift */,
+				82A2C1CC4C7FF6EE87DB157B /* ObjectDetailView.swift */,
+				948DDEFB3882788FEF6FC296 /* ObjectListView.swift */,
+				823C1D03B5EDB7DA3AA04EA3 /* OnboardingView.swift */,
+				16A785242B490F0301E86AF1 /* ExperienceDetailView.swift */,
+				721B9C608B2F9B23FDC3B03D /* PublishFormView.swift */,
+				3D74A9A0DD7395AEB7F18266 /* PublishView.swift */,
+				7742E1525DB122603E7041A5 /* SettingsView.swift */,
+				6F43CDA31999717341202A67 /* ShowcaseView.swift */,
+				52410445CF1CC2FFF29130AD /* MultiSetARApp.swift */,
+				E7415B2C560B54604E6C915A /* RootView.swift */,
+				9A4890FEF411237E85B7AD66 /* OnDemandResources.swift */,
+				E0CFA8398C11CF7925D2E521 /* QRCode.swift */,
+				2B7B8823208F8CC769A2061E /* QRScannerSheet.swift */,
 			);
-			mainGroup = 3B3CD63E49B8538E8FC904C6;
-			packageReferences = (
-				A6B2330B6E2AE93CFF181503 /* XCLocalSwiftPackageReference "Packages/MultiSetKit" */,
-				371F91280D3499FD1352960C /* XCLocalSwiftPackageReference "Packages/MultiSetUI" */,
-				135E5E641E3A1AFBCA672BE1 /* XCLocalSwiftPackageReference "Packages/MultiSetARCore" */,
-				9E1B07A55EC306DC05B42061 /* XCLocalSwiftPackageReference "Vendor" */,
-			);
-			preferredProjectObjectVersion = 77;
-			productRefGroup = EC838BF479392FA8C7D80DC4 /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				9AA3943A86A18796A07E090B /* MultiSet AR */,
-				970D30D14D0BF2FFD203078F /* MultiSet AR Clip */,
-			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXProject section */
+		52DC0B9E130DD0A51A5C5B5F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AEAC21D3E534075456A77E6D /* ClipModel.swift */,
+				14B4CEB3F4779D00B198C31F /* ClipShellView.swift */,
+				4128B748CEDAC807A85F3A94 /* MultiSetARClipApp.swift */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
 
 /* Begin PBXResourcesBuildPhase section */
 		28BEFC48F8E391FE25632526 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2428F3A6CF38DB0A540D1D16 /* Assets.xcassets in Resources */,
-				5FD3DC5B31768E63EEC27CA1 /* PrivacyInfo.xcprivacy in Resources */,
-				498EBBFE6DD48011D448D7E0 /* MultiSetProductionAssets.xcassets in Resources */,
+				2428F3A6CF38DB0A540D1D16 /* Assets.xcassets */,
+				5FD3DC5B31768E63EEC27CA1 /* PrivacyInfo.xcprivacy */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,56 +366,26 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7D36362185B80541A4AEBB /* Assets.xcassets in Resources */,
-				6BEDE9B95042E55510F4C135 /* PrivacyInfo.xcprivacy in Resources */,
+				3D7D36362185B80541A4AEBB /* Assets.xcassets */,
+				6BEDE9B95042E55510F4C135 /* PrivacyInfo.xcprivacy */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXSourcesBuildPhase section */
-		52DC0B9E130DD0A51A5C5B5F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
+/* Begin PBXCopyFilesBuildPhase section */
+		0C87990C027B6DE2D3B76F91 /* Embed App Clips */ = {
+			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
+			dstSubfolderSpec = 16;
 			files = (
-				AEAC21D3E534075456A77E6D /* ClipModel.swift in Sources */,
-				14B4CEB3F4779D00B198C31F /* ClipShellView.swift in Sources */,
-				4128B748CEDAC807A85F3A94 /* MultiSetARClipApp.swift in Sources */,
+				E079DAE47ACB9BF2DA49DB9B /* MultiSet AR Clip.app in Embed App Clips */,
 			);
+			name = "Embed App Clips";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		936DB12268969D863D8636DF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				35AD6A0120BDCD6D13C9CC30 /* ExperienceRunner.swift in Sources */,
-				BCAA26D657C80A949B472969 /* SDKPoseProvider.swift in Sources */,
-				1FFDAA0FC46C71B527B64E9A /* AppModel.swift in Sources */,
-				50DE9531FBC83DC549BEB85C /* SignInView.swift in Sources */,
-				A1891ACC94D0A03C44BA08F5 /* DemoKind.swift in Sources */,
-				5931443F7263A001472E4255 /* DemoRunnerView.swift in Sources */,
-				8603B95DD95F6EFABFE62070 /* HomeView.swift in Sources */,
-				80395AAAEA6DEF029EDF1CAA /* LearnView.swift in Sources */,
-				35B2C95F787154D1912032A2 /* LibraryView.swift in Sources */,
-				CABCD91B85B9379D5647C020 /* MapDetailView.swift in Sources */,
-				FFFCF91341581D602CCF5032 /* MapListView.swift in Sources */,
-				84B512064F1A77344356D987 /* MapSetListView.swift in Sources */,
-				82A2C1CC4C7FF6EE87DB157B /* ObjectDetailView.swift in Sources */,
-				948DDEFB3882788FEF6FC296 /* ObjectListView.swift in Sources */,
-				823C1D03B5EDB7DA3AA04EA3 /* OnboardingView.swift in Sources */,
-				16A785242B490F0301E86AF1 /* ExperienceDetailView.swift in Sources */,
-				721B9C608B2F9B23FDC3B03D /* PublishFormView.swift in Sources */,
-				3D74A9A0DD7395AEB7F18266 /* PublishView.swift in Sources */,
-				7742E1525DB122603E7041A5 /* SettingsView.swift in Sources */,
-				6F43CDA31999717341202A67 /* ShowcaseView.swift in Sources */,
-				52410445CF1CC2FFF29130AD /* MultiSetARApp.swift in Sources */,
-				E7415B2C560B54604E6C915A /* RootView.swift in Sources */,
-				E0CFA8398C11CF7925D2E521 /* QRCode.swift in Sources */,
-				2B7B8823208F8CC769A2061E /* QRScannerSheet.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		3BBEAB59CDFC433416BC65E6 /* PBXTargetDependency */ = {
@@ -504,12 +395,21 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXContainerItemProxy section */
+		119CA161A63788B7A5C5CE86 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 244210E48437B6556980A702 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 970D30D14D0BF2FFD203078F;
+			remoteInfo = "MultiSet AR Clip";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin XCBuildConfiguration section */
 		293F239B01071FF6BA86B127 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 75B075407F6FE7E194F2BFB3 /* Clip.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = L7J6D9A85G;
 			};
 			name = Release;
 		};
@@ -517,7 +417,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F23C138F529C575808984702 /* App.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = L7J6D9A85G;
 			};
 			name = Release;
 		};
@@ -525,7 +424,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 75B075407F6FE7E194F2BFB3 /* Clip.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = L7J6D9A85G;
 			};
 			name = Debug;
 		};
@@ -540,7 +438,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F23C138F529C575808984702 /* App.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = L7J6D9A85G;
 			};
 			name = Debug;
 		};
@@ -554,16 +451,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1C7C416967B21982336E5666 /* Build configuration list for PBXNativeTarget "MultiSet AR" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DF5E2D53C2FD28AB95CC5F66 /* Debug */,
-				4677EB568FD7CF2D60874EE0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		24425F783A562CA72CB87B70 /* Build configuration list for PBXProject "MultiSet AR" */ = {
+		24425F783A562CA72CB87B70 /* Build configuration list */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3DB25C0BB0BA42E47194DEF /* Debug */,
@@ -572,7 +460,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		842FB713BDA2369BA2D166FA /* Build configuration list for PBXNativeTarget "MultiSet AR Clip" */ = {
+		1C7C416967B21982336E5666 /* Build configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF5E2D53C2FD28AB95CC5F66 /* Debug */,
+				4677EB568FD7CF2D60874EE0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		842FB713BDA2369BA2D166FA /* Build configuration list */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				93E34241E3EC3C04CBABA5BD /* Debug */,
@@ -586,19 +483,19 @@
 /* Begin XCLocalSwiftPackageReference section */
 		135E5E641E3A1AFBCA672BE1 /* XCLocalSwiftPackageReference "Packages/MultiSetARCore" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/MultiSetARCore;
+			relativePath = "Packages/MultiSetARCore";
 		};
 		371F91280D3499FD1352960C /* XCLocalSwiftPackageReference "Packages/MultiSetUI" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/MultiSetUI;
+			relativePath = "Packages/MultiSetUI";
 		};
 		9E1B07A55EC306DC05B42061 /* XCLocalSwiftPackageReference "Vendor" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Vendor;
+			relativePath = "Vendor";
 		};
 		A6B2330B6E2AE93CFF181503 /* XCLocalSwiftPackageReference "Packages/MultiSetKit" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/MultiSetKit;
+			relativePath = "Packages/MultiSetKit";
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -632,6 +529,98 @@
 			productName = MultiSetUI;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin PBXNativeTarget section */
+		9AA3943A86A18796A07E090B /* MultiSet AR */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1C7C416967B21982336E5666 /* Build configuration list */;
+			buildPhases = (
+				936DB12268969D863D8636DF /* Sources */,
+				BF1C5A9E98A1E11C2A5A0702 /* Frameworks */,
+				28BEFC48F8E391FE25632526 /* Resources */,
+				0C87990C027B6DE2D3B76F91 /* Embed App Clips */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3BBEAB59CDFC433416BC65E6 /* PBXTargetDependency */,
+			);
+			name = "MultiSet AR";
+			packageProductDependencies = (
+				CBD44AE9BC67ED3EA5190D0D /* MultiSetKit */,
+				F576D0CF33A16C48524A8182 /* MultiSetUI */,
+				8EFCEF276F7BC6E045C92F3D /* MultiSetARCore */,
+				5E6453C791B27B8D811FD762 /* MultiSetSDKBinary */,
+			);
+			productName = "MultiSet AR";
+			productReference = 19163E4DB25873B65B6F241E /* MultiSet AR.app */;
+			productType = "com.apple.product-type.application";
+		};
+		970D30D14D0BF2FFD203078F /* MultiSet AR Clip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 842FB713BDA2369BA2D166FA /* Build configuration list */;
+			buildPhases = (
+				52DC0B9E130DD0A51A5C5B5F /* Sources */,
+				6F58A608AC664E62D7A67190 /* Frameworks */,
+				572D3338E7584B5F04AE9E9C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MultiSet AR Clip";
+			packageProductDependencies = (
+				5834E7456808B30907ACE7BC /* MultiSetKit */,
+				E4EFEC51D23CA133B2BB5F4E /* MultiSetUI */,
+				1064ECF73AE6194090E1AA9B /* MultiSetARCore */,
+			);
+			productName = "MultiSet AR Clip";
+			productReference = F06557B78455BF326B33B8BB /* MultiSet AR Clip.app */;
+			productType = "com.apple.product-type.application.on-demand-install-capable";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		244210E48437B6556980A702 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					9AA3943A86A18796A07E090B = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					970D30D14D0BF2FFD203078F = {
+						CreatedOnToolsVersion = 26.6;
+					};
+				};
+			};
+			buildConfigurationList = 24425F783A562CA72CB87B70 /* Build configuration list */;
+			preferredProjectObjectVersion = 77;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3B3CD63E49B8538E8FC904C6;
+			packageReferences = (
+				A6B2330B6E2AE93CFF181503 /* XCLocalSwiftPackageReference "Packages/MultiSetKit" */,
+				371F91280D3499FD1352960C /* XCLocalSwiftPackageReference "Packages/MultiSetUI" */,
+				135E5E641E3A1AFBCA672BE1 /* XCLocalSwiftPackageReference "Packages/MultiSetARCore" */,
+				9E1B07A55EC306DC05B42061 /* XCLocalSwiftPackageReference "Vendor" */,
+			);
+			productRefGroup = EC838BF479392FA8C7D80DC4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9AA3943A86A18796A07E090B /* MultiSet AR */,
+				970D30D14D0BF2FFD203078F /* MultiSet AR Clip */,
+			);
+		};
+/* End PBXProject section */
+
 	};
 	rootObject = 244210E48437B6556980A702 /* Project object */;
 }

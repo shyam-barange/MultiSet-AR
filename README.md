@@ -42,6 +42,7 @@ reachable from the Clip binary.
 
 ```sh
 ./Scripts/check-clip-secrets.sh --self-test   # proves the gate can still detect a leak
+./Scripts/sync-app-icon.sh                    # re-copies the icon masters into both catalogs
 ```
 
 ## Project file

@@ -13,13 +13,13 @@ struct ClipShellView: View {
             switch model.state {
             case .awaitingInvocation:
                 ClipStatusView(
-                    illustration: .searching(progress: 0.5),
+                    art: .searching,
                     title: "Opening",
                     message: "Reading the code you scanned."
                 )
             case .resolving:
                 ClipStatusView(
-                    illustration: .searching(progress: 0.75),
+                    art: .searching,
                     title: "Getting things ready",
                     message: "Fetching this location's experience."
                 )
@@ -67,13 +67,14 @@ struct ClipShellView: View {
 }
 
 struct ClipStatusView: View {
-    let illustration: MSIllustration
+    let art: StateArt
     let title: String
     let message: String
+    var tint: Color?
 
     var body: some View {
         VStack(spacing: MSSpacing.lg) {
-            MSIllustrationView(illustration, size: 120)
+            StateArtView(art, size: 120, tint: tint)
             Text(title)
                 .font(MSFont.title)
                 .foregroundStyle(MSColor.textPrimary)
@@ -99,7 +100,7 @@ struct ClipFailureView: View {
 
     var body: some View {
         VStack(spacing: MSSpacing.xl) {
-            MSIllustrationView(illustration, size: 120)
+            StateArtView(art, size: 120, tint: art == .searching ? nil : MSColor.textMuted)
 
             VStack(spacing: MSSpacing.sm) {
                 Text(title)
@@ -150,10 +151,12 @@ struct ClipFailureView: View {
         }
     }
 
-    private var illustration: MSIllustration {
+    /// A transient failure keeps the searching mark, since trying again may work.
+    /// A terminal one gets the struck-through mark.
+    private var art: StateArt {
         switch error {
-        case .offline, .rateLimited, .server, .network: .searching(progress: 0.2)
-        default: .invalidated
+        case .offline, .rateLimited, .server, .network: .searching
+        default: .experienceEnded
         }
     }
 }

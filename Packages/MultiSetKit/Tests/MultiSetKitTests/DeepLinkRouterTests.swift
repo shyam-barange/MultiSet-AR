@@ -194,3 +194,20 @@ final class DeepLinkRouterTests: XCTestCase {
         )
     }
 }
+
+extension DeepLinkRouterTests {
+    func testTabRoutesNavigateInternally() {
+        for tab in ["home", "library", "publish", "learn", "settings"] {
+            XCTAssertEqual(destination("multisetar://\(tab)"), .tab(tab), "failed for \(tab)")
+        }
+    }
+
+    func testUnknownTabIsRejected() {
+        XCTAssertNil(destination("multisetar://nonsense"))
+    }
+
+    func testTabRoutesAreNotReachableOverHTTPS() {
+        // Internal navigation must not be triggerable from a web link.
+        XCTAssertNil(destination("https://api.multiset.ai/learn"))
+    }
+}

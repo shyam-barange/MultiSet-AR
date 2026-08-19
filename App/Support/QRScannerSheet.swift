@@ -55,7 +55,7 @@ struct QRScannerSheet: View {
 
     private var permissionMessage: some View {
         VStack(spacing: MSSpacing.lg) {
-            MSIllustrationView(.invalidated, size: 88).colorScheme(.dark)
+            StateArtView(.experienceEnded, size: 88, tint: MSColor.AR.text)
             Text("Camera access is off")
                 .font(MSFont.title)
                 .foregroundStyle(MSColor.AR.text)

@@ -55,7 +55,7 @@ struct PublishView: View {
     private var content: some View {
         ResourceList(
             list: list,
-            emptyIllustration: .noMaps,
+            emptyArt: .noMaps,
             emptyTitle: "No experiences yet",
             emptyMessage: "Publish a map as an experience and you get a QR code anyone can scan — no install, no account."
         ) { space in

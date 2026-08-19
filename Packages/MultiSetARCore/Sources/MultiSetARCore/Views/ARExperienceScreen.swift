@@ -89,7 +89,7 @@ public struct ARExperienceScreen: View {
 
     private var unsupportedDevice: some View {
         VStack(spacing: MSSpacing.lg) {
-            MSIllustrationView(.invalidated, size: 96)
+            StateArtView(.experienceEnded, size: 96, tint: MSColor.AR.text)
             Text("This device doesn't support ARKit")
                 .font(MSFont.title)
                 .foregroundStyle(MSColor.AR.text)
@@ -104,7 +104,7 @@ public struct ARExperienceScreen: View {
 
     private var cameraDenied: some View {
         VStack(spacing: MSSpacing.lg) {
-            MSIllustrationView(.invalidated, size: 96)
+            StateArtView(.experienceEnded, size: 96, tint: MSColor.AR.text)
             Text("Camera access is off")
                 .font(MSFont.title)
                 .foregroundStyle(MSColor.AR.text)

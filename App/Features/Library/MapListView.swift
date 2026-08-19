@@ -67,7 +67,7 @@ struct MapListView: View {
     var body: some View {
         ResourceList(
             list: list,
-            emptyIllustration: .noMaps,
+            emptyArt: .noMaps,
             emptyTitle: "No maps yet",
             emptyMessage: "Scan a space with the MultiSet app, or upload a point cloud in the developer portal."
         ) { map in
@@ -155,7 +155,7 @@ struct MapRow: View {
 /// list in the app behaves the same way.
 struct ResourceList<Item: Identifiable & Sendable, Row: View>: View {
     @ObservedObject var list: ResourceListModel<Item>
-    let emptyIllustration: MSIllustration
+    let emptyArt: StateArt
     let emptyTitle: String
     let emptyMessage: String
     @ViewBuilder let row: (Item) -> Row
@@ -166,7 +166,7 @@ struct ResourceList<Item: Identifiable & Sendable, Row: View>: View {
                 if let error = list.error {
                     errorState(error)
                 } else if list.isEmptyAfterLoading {
-                    MSEmptyState(emptyIllustration, title: emptyTitle, message: emptyMessage)
+                    MSEmptyState(emptyArt, title: emptyTitle, message: emptyMessage)
                         .padding(.top, MSSpacing.xxl)
                 } else {
                     ForEach(list.items) { item in
@@ -187,7 +187,7 @@ struct ResourceList<Item: Identifiable & Sendable, Row: View>: View {
 
     private func errorState(_ error: MultiSetError) -> some View {
         VStack(spacing: MSSpacing.lg) {
-            MSIllustrationView(.invalidated)
+            StateArtView(.experienceEnded, tint: MSColor.textMuted)
             Text(error.errorDescription ?? "")
                 .font(MSFont.callout)
                 .foregroundStyle(MSColor.textSecondary)
