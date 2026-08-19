@@ -12,12 +12,17 @@ struct SettingsView: View {
     @State private var showsSignIn = false
     @State private var showsSignOutConfirmation = false
     @State private var plan: PlanDetails?
+    @State private var sdkCredentials: M2MCredentials?
+    @State private var showsCredentialEntry = false
     @State private var cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
 
     var body: some View {
         NavigationStack {
             List {
                 accountSection
+                if model.isSignedIn {
+                    sdkCredentialsSection
+                }
                 if let warning = model.secretStorageWarning {
                     warningSection(warning)
                 }
@@ -47,7 +52,15 @@ struct SettingsView: View {
             } message: {
                 Text("Your credentials are removed from this device's keychain, along with everything cached from your account.")
             }
-            .task { await loadPlan() }
+            .sheet(isPresented: $showsCredentialEntry) {
+                SDKCredentialsSheet { credentials in
+                    sdkCredentials = credentials
+                }
+            }
+            .task {
+                await loadPlan()
+                sdkCredentials = await model.auth.storedMachineCredentials
+            }
         }
     }
 
@@ -82,6 +95,47 @@ struct SettingsView: View {
                     .foregroundStyle(MSColor.textMuted)
             }
         }
+    }
+
+    /// The AR test screens run the MultiSet SDK, which authenticates with its own
+    /// client ID and secret rather than the signed-in user's token. Showing the state
+    /// here means it can be fixed before a session fails rather than during one.
+    @ViewBuilder
+    private var sdkCredentialsSection: some View {
+        Section {
+            if let sdkCredentials {
+                MSMonoValue("CLIENT ID", Self.masked(sdkCredentials.clientId))
+                MSStatusPill("Ready", tone: .positive, systemImage: "checkmark.circle.fill")
+                Button("Replace credentials") { showsCredentialEntry = true }
+            } else {
+                Text("Not set up yet")
+                    .font(MSFont.callout)
+                    .foregroundStyle(MSColor.textSecondary)
+                Button("Create automatically") {
+                    Task {
+                        let failure = await model.ensureSDKCredentials()
+                        sdkCredentials = await model.auth.storedMachineCredentials
+                        if let failure {
+                            model.toast = MSToast(
+                                message: failure.errorDescription ?? "Couldn't create credentials.",
+                                tone: .failure
+                            )
+                        }
+                    }
+                }
+                Button("Enter manually") { showsCredentialEntry = true }
+            }
+        } header: {
+            Text("SDK credentials")
+        } footer: {
+            Text("Testing localization and object tracking runs the MultiSet SDK, which needs its own client ID and secret. The app creates one for you; enter a pair from the developer portal if that isn't possible on your account.")
+        }
+    }
+
+    /// Enough to recognise which pair is in use without printing it in full.
+    static func masked(_ value: String) -> String {
+        guard value.count > 10 else { return value }
+        return "\(value.prefix(8))…\(value.suffix(4))"
     }
 
     private func warningSection(_ warning: String) -> some View {

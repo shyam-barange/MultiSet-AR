@@ -118,11 +118,26 @@ Both are now pinned by tests against the shapes in the API's own Postman
 collection, including the 201 status and the fact that a listed client never
 carries a secret — which is why an existing client cannot be reused.
 
-If minting genuinely cannot succeed — a plan that disallows it, for instance — the
-screen falls back to REST localization driven by the user's own access token rather
-than dead-ending, and says so. The mesh overlay is the one capability lost: the SDK
-renders it with a hand-written glTF parser and a Metal shader, which the REST path
-has no equivalent of and which is not worth reimplementing.
+If minting cannot succeed — a plan that disallows it, for instance — the screen
+says so, shows the server's own message, and offers the three things that can be
+done about it: enter a pair from the developer portal, retry, or continue without
+the SDK.
+
+An earlier version instead switched to REST localization silently. That was wrong
+twice over: it presented a different AR engine, with a different interface and no
+mesh overlay, as though it were the thing the user asked for; and it hid a fixable
+credential failure behind a worse experience. Continuing without the SDK is now
+only ever a deliberate choice.
+
+Manual entry is validated by exchanging the pair for a token, so a typo is caught
+at the sheet rather than surfacing later as a failed AR session. The scanner shares
+`M2MCredentials.parse(scannedPayload:)` with the experience scanner, which is why
+it rejects anything containing `://` — a URL splits on the scheme's colon into two
+plausible-looking halves, so scanning an experience QR would otherwise be stored as
+a credential pair.
+
+Settings shows whether SDK credentials exist, so this is fixable before a session
+fails rather than during one.
 
 ## The constraint that shapes everything
 

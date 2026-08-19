@@ -28,14 +28,18 @@ struct SDKRunner: View {
     @StateObject private var session = SDKSession()
     @State private var credentials: M2MCredentials?
     @State private var resolution: Resolution = .resolving
+    @State private var showsCredentialEntry = false
 
     private enum Resolution: Equatable {
         case resolving
         case ready
-        /// Signed in, but the SDK credentials the AR screens need could not be
-        /// created. Localization still runs — see `restFallback`.
-        case restFallback(reason: MultiSetError)
+        /// Signed in, but SDK credentials could not be created. The reason is shown
+        /// rather than worked around: substituting a different AR engine silently
+        /// answers a question the user did not ask.
+        case credentialsUnavailable(reason: MultiSetError)
         case signInRequired
+        /// The user chose to continue without the SDK, knowing what that costs.
+        case runningWithoutSDK
     }
 
     var body: some View {
@@ -45,14 +49,21 @@ struct SDKRunner: View {
                 loading
             case .signInRequired:
                 signInRequired
-            case .restFallback(let reason):
-                restFallback(reason: reason)
+            case .credentialsUnavailable(let reason):
+                credentialsUnavailable(reason: reason)
+            case .runningWithoutSDK:
+                withoutSDK
             case .ready:
                 startedSession()
             }
         }
         .task { await resolveCredentials() }
         .onDisappear { session.stop() }
+        .sheet(isPresented: $showsCredentialEntry) {
+            SDKCredentialsSheet { credentials in
+                startSDK(with: credentials)
+            }
+        }
     }
 
     /// The AR view is only built once the SDK is initialized. `MultiSetARView` hands
@@ -101,7 +112,8 @@ struct SDKRunner: View {
             SDKFailureOverlay(
                 title: "Sign in to localize",
                 message: """
-                Localizing runs against the maps in your MultiSet account, so it needs                 you signed in. Everything on the Home tab works without an account.
+                Localizing runs against the maps in your MultiSet account, so it needs \
+                you signed in. Everything on the Home tab works without an account.
                 """,
                 onRetry: { Task { await resolveCredentials() } },
                 onExit: onExit
@@ -109,13 +121,64 @@ struct SDKRunner: View {
         }
     }
 
-    /// Signed in, but no SDK credentials. Rather than dead-ending, this runs the same
-    /// REST localization the App Clip uses — driven by the signed-in user's own access
-    /// token, refreshed as needed. The mesh overlay is the one thing lost: the SDK
-    /// renders it with its own glTF parser and Metal shader, which the REST path has
-    /// no equivalent of.
+    /// States the actual failure and offers the three things that can be done about
+    /// it, rather than quietly running a different engine.
+    private func credentialsUnavailable(reason: MultiSetError) -> some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VStack(spacing: MSSpacing.lg) {
+                StateArtView(.experienceEnded, size: 88, tint: MSColor.AR.text)
+
+                Text("Couldn't create SDK credentials")
+                    .font(MSFont.title)
+                    .foregroundStyle(MSColor.AR.text)
+                    .multilineTextAlignment(.center)
+
+                Text("""
+                The MultiSet SDK authenticates with a client ID and secret, and \
+                creating one for this device failed.
+                """)
+                    .font(MSFont.callout)
+                    .foregroundStyle(MSColor.AR.textDim)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                // The server's own words, so the cause is diagnosable rather than guessed at.
+                Text(reason.errorDescription ?? "")
+                    .font(MSFont.monoSmall)
+                    .foregroundStyle(MSColor.AR.poor)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(MSSpacing.sm)
+                    .background(MSColor.AR.panel, in: RoundedRectangle(cornerRadius: MSRadius.sm))
+                    .textSelection(.enabled)
+
+                VStack(spacing: MSSpacing.sm) {
+                    Button("Enter SDK credentials") { showsCredentialEntry = true }
+                        .msButton(.primary, fullWidth: false)
+                    Button("Try again") { Task { await resolveCredentials() } }
+                        .msButton(.secondary, fullWidth: false)
+                    Button("Continue without the SDK") { resolution = .runningWithoutSDK }
+                        .font(MSFont.caption)
+                        .foregroundStyle(MSColor.AR.textDim)
+                        .frame(minHeight: MSSize.minTouchTarget)
+                        .accessibilityHint("Localizes without the mesh overlay")
+                    Button("Close", action: onExit)
+                        .font(MSFont.caption)
+                        .foregroundStyle(MSColor.AR.textDim)
+                        .frame(minHeight: MSSize.minTouchTarget)
+                }
+            }
+            .padding(MSSpacing.xl)
+        }
+    }
+
+    /// Chosen deliberately, never substituted. Uses the same REST engine the App Clip
+    /// runs on, driven by the signed-in user's own access token. The mesh overlay is
+    /// what is lost: the SDK renders it with a hand-written glTF parser and a Metal
+    /// shader that the REST path has no equivalent of.
     @ViewBuilder
-    private func restFallback(reason: MultiSetError) -> some View {
+    private var withoutSDK: some View {
         switch mode {
         case .localize(let target):
             ARExperienceScreen(
@@ -124,10 +187,11 @@ struct SDKRunner: View {
                     target: target.restTarget,
                     localizationMode: target.restLocalizationMode
                 ),
-                providerFactory: { _ in (RESTPoseProvider(api: model.api, mode: target.restLocalizationMode), nil) },
+                providerFactory: { _ in
+                    (RESTPoseProvider(api: model.api, mode: target.restLocalizationMode), nil)
+                },
                 onExit: onExit
             )
-            .task { await announceFallback(reason) }
         case .trackObjects(let codes):
             ARExperienceScreen(
                 configuration: ExperienceConfiguration(
@@ -141,15 +205,7 @@ struct SDKRunner: View {
                 },
                 onExit: onExit
             )
-            .task { await announceFallback(reason) }
         }
-    }
-
-    private func announceFallback(_ reason: MultiSetError) async {
-        model.toast = MSToast(
-            message: "Running without the SDK, so no mesh overlay. \(reason.errorDescription ?? "")",
-            tone: .info
-        )
     }
 
     private func resolveCredentials() async {
@@ -168,14 +224,14 @@ struct SDKRunner: View {
         // A signed-in user has everything needed to create SDK credentials, so this
         // is done for them rather than asked of them.
         if let failure = await model.ensureSDKCredentials() {
-            resolution = failure == .unauthorized ? .signInRequired : .restFallback(reason: failure)
+            resolution = failure == .unauthorized ? .signInRequired : .credentialsUnavailable(reason: failure)
             return
         }
 
         if let stored = await model.auth.storedMachineCredentials {
             startSDK(with: stored)
         } else {
-            resolution = .restFallback(reason: .decoding(context: "SDK credentials"))
+            resolution = .credentialsUnavailable(reason: .decoding(context: "SDK credentials"))
         }
     }
 

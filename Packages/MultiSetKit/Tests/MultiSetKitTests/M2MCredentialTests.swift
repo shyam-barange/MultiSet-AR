@@ -146,3 +146,70 @@ final class M2MCredentialTests: XCTestCase {
         XCTAssertNil(page.all.first?.clientSecret)
     }
 }
+
+/// A scanned pair is how a developer supplies credentials when the app cannot mint
+/// them, so a wrong parse fails an AR session much later and further away.
+final class ScannedCredentialTests: XCTestCase {
+    func testParsesJSONPayload() {
+        let pair = M2MCredentials.parse(scannedPayload: """
+        {"clientId":"f423e6cd","clientSecret":"eed07a68"}
+        """)
+        XCTAssertEqual(pair?.clientId, "f423e6cd")
+        XCTAssertEqual(pair?.clientSecret, "eed07a68")
+    }
+
+    func testParsesSnakeCaseJSONPayload() {
+        let pair = M2MCredentials.parse(scannedPayload: #"{"client_id":"a","client_secret":"b"}"#)
+        XCTAssertEqual(pair?.clientId, "a")
+        XCTAssertEqual(pair?.clientSecret, "b")
+    }
+
+    func testParsesQueryStringAndAFullURL() {
+        for payload in [
+            "clientId=abc&clientSecret=def",
+            "https://developer.multiset.ai/credentials?clientId=abc&clientSecret=def"
+        ] {
+            let pair = M2MCredentials.parse(scannedPayload: payload)
+            XCTAssertEqual(pair?.clientId, "abc", "failed for \(payload)")
+            XCTAssertEqual(pair?.clientSecret, "def", "failed for \(payload)")
+        }
+    }
+
+    func testPercentEncodedQueryValuesAreDecoded() {
+        let pair = M2MCredentials.parse(scannedPayload: "clientId=a%2Db&clientSecret=c%2Dd")
+        XCTAssertEqual(pair?.clientId, "a-b")
+        XCTAssertEqual(pair?.clientSecret, "c-d")
+    }
+
+    func testParsesSeparatedPairs() {
+        for payload in ["abc:def", "abc,def", "abc\ndef", "  abc : def  "] {
+            let pair = M2MCredentials.parse(scannedPayload: payload)
+            XCTAssertEqual(pair?.clientId, "abc", "failed for \(payload.debugDescription)")
+            XCTAssertEqual(pair?.clientSecret, "def", "failed for \(payload.debugDescription)")
+        }
+    }
+
+    func testRejectsAmbiguousOrIncompletePayloads() {
+        // Guessing here would store a wrong pair that only fails much later.
+        for payload in [
+            "",
+            "   ",
+            "onlyonevalue",
+            "a:b:c",
+            #"{"clientId":"a"}"#,
+            #"{"clientId":"","clientSecret":"b"}"#,
+            "clientId=a",
+            "https://app.multiset.ai/space/k7m2p9xq"
+        ] {
+            XCTAssertNil(
+                M2MCredentials.parse(scannedPayload: payload),
+                "should not have parsed \(payload.debugDescription)"
+            )
+        }
+    }
+
+    func testAnExperienceQRIsNotMistakenForCredentials() {
+        // The same scanner is used for both, so the two payloads must not overlap.
+        XCTAssertNil(M2MCredentials.parse(scannedPayload: "https://api.multiset.ai/space/k7m2p9xq"))
+    }
+}

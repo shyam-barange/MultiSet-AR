@@ -42,6 +42,57 @@ public struct M2MCredentials: Codable, Sendable, Equatable {
         self.clientId = clientId
         self.clientSecret = clientSecret
     }
+
+    /// Reads a credential pair out of a scanned QR payload.
+    ///
+    /// The portal's encoding is not specified, so the three plausible shapes are all
+    /// accepted: a JSON object, a query string, or two values separated by a colon,
+    /// comma or newline. Anything else returns nil rather than guessing, since a
+    /// wrong pair fails later and further away.
+    public static func parse(scannedPayload payload: String) -> M2MCredentials? {
+        let trimmed = payload.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        if let data = trimmed.data(using: .utf8),
+           let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            guard let id = string(object["clientId"] ?? object["client_id"]),
+                  let secret = string(object["clientSecret"] ?? object["client_secret"])
+            else { return nil }
+            return M2MCredentials(clientId: id, clientSecret: secret)
+        }
+
+        if trimmed.contains("clientId=") || trimmed.contains("client_id=") {
+            let query = trimmed.split(separator: "?").last.map(String.init) ?? trimmed
+            var found: [String: String] = [:]
+            for pair in query.split(separator: "&") {
+                let parts = pair.split(separator: "=", maxSplits: 1).map(String.init)
+                guard parts.count == 2 else { continue }
+                found[parts[0]] = parts[1].removingPercentEncoding ?? parts[1]
+            }
+            guard let id = string(found["clientId"] ?? found["client_id"]),
+                  let secret = string(found["clientSecret"] ?? found["client_secret"])
+            else { return nil }
+            return M2MCredentials(clientId: id, clientSecret: secret)
+        }
+
+        // A URL would split on the scheme's colon into two plausible-looking halves.
+        // The same scanner reads experience QR codes, so scanning one here must be
+        // rejected rather than stored as a credential pair.
+        guard !trimmed.contains("://") else { return nil }
+
+        let parts = trimmed
+            .split(whereSeparator: { $0 == ":" || $0 == "\n" || $0 == "," })
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        guard parts.count == 2 else { return nil }
+        return M2MCredentials(clientId: parts[0], clientSecret: parts[1])
+    }
+
+    private static func string(_ value: Any?) -> String? {
+        guard let text = value as? String else { return nil }
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
 }
 
 /// Scopes an M2M client can hold. `query` is what localization and object tracking
