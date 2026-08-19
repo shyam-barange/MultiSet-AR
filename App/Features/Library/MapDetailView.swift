@@ -13,7 +13,7 @@ struct MapDetailView: View {
     @State private var heatmap: [HeatmapCell] = []
     @State private var loadError: MultiSetError?
     @State private var isLoading = true
-    @State private var runningConfiguration: ExperienceConfiguration?
+    @State private var runningMode: SDKRunner.Mode?
     @State private var toast: MSToast?
 
     var body: some View {
@@ -39,10 +39,8 @@ struct MapDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .overlay { if isLoading { ProgressView() } }
         .msToast($toast)
-        .fullScreenCover(item: $runningConfiguration) { configuration in
-            TestLocalizationRunner(configuration: configuration) {
-                runningConfiguration = nil
-            }
+        .fullScreenCover(item: $runningMode) { mode in
+            SDKRunner(mode: mode) { runningMode = nil }
         }
         .task { await load() }
     }
@@ -77,25 +75,24 @@ struct MapDetailView: View {
                     .font(MSFont.headline)
                     .foregroundStyle(MSColor.textPrimary)
                 Text(map.status.isReady
-                    ? "Stand inside this map and check that VPS places you where it should, with live confidence and latency."
+                    ? "Stand inside this map and check that VPS places you where it should. On success the map's mesh downloads and overlays the real space, so you can see exactly how the two line up."
                     : "This map isn't ready to localize against yet.")
                     .font(MSFont.caption)
                     .foregroundStyle(MSColor.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 HStack(spacing: MSSpacing.sm) {
-                    ForEach(LocalizationMode.allCases) { mode in
-                        Button(mode.displayName) {
-                            runningConfiguration = ExperienceConfiguration(
-                                mode: .localize,
-                                target: .map(code: map.mapCode),
-                                localizationMode: mode,
-                                geoHint: map.geoPosition
-                            )
-                        }
-                        .msButton(mode == .multiFrame ? .primary : .secondary, fullWidth: false)
-                        .disabled(!map.status.isReady)
+                    Button("Single frame") {
+                        runningMode = .localize(target: .map(code: map.mapCode, mode: .singleFrame))
                     }
+                    .msButton(.secondary, fullWidth: false)
+                    .disabled(!map.status.isReady)
+
+                    Button("Multi frame") {
+                        runningMode = .localize(target: .map(code: map.mapCode, mode: .multiFrame))
+                    }
+                    .msButton(.primary, fullWidth: false)
+                    .disabled(!map.status.isReady)
                 }
             }
         }

@@ -78,6 +78,17 @@ public enum LearnImage: String, CatalogImage, CaseIterable, Sendable {
     public static let onDemandResourceTag = "learn-content"
 }
 
+/// Art imported from the MultiSet SDK's own sample app, for the SDK-driven
+/// localization and object-tracking screens. App target — see `CatalogImage`.
+public enum SDKImage: String, CatalogImage, CaseIterable, Sendable {
+    case captureButton = "capture_button"
+    case arBackground = "bg_ar"
+    case phone = "phone_image"
+
+    public var assetName: String { rawValue }
+    public static var bundle: Bundle? { nil }
+}
+
 /// The four empty and status illustrations, as template-rendered vectors so they
 /// tint with the accent. This package's bundle, because the Clip renders them too.
 public enum StateArt: String, CatalogImage, CaseIterable, Sendable {

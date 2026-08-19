@@ -7,7 +7,7 @@ struct ObjectDetailView: View {
     let object: TrackedObject
 
     @EnvironmentObject private var model: AppModel
-    @State private var runningConfiguration: ExperienceConfiguration?
+    @State private var runningMode: SDKRunner.Mode?
     @State private var toast: MSToast?
 
     var body: some View {
@@ -24,10 +24,8 @@ struct ObjectDetailView: View {
         .navigationTitle(object.objectName)
         .navigationBarTitleDisplayMode(.inline)
         .msToast($toast)
-        .fullScreenCover(item: $runningConfiguration) { configuration in
-            TestLocalizationRunner(configuration: configuration) {
-                runningConfiguration = nil
-            }
+        .fullScreenCover(item: $runningMode) { mode in
+            SDKRunner(mode: mode) { runningMode = nil }
         }
     }
 
@@ -55,16 +53,12 @@ struct ObjectDetailView: View {
                 Text("Test tracking")
                     .font(MSFont.headline)
                     .foregroundStyle(MSColor.textPrimary)
-                Text("Point the camera at the object. Its outline is traced as you move around it.")
+                Text("Point the camera at the object. On a match its mesh downloads and traces the real object's outline, holding position as you move around it.")
                     .font(MSFont.caption)
                     .foregroundStyle(MSColor.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 Button("Start tracking") {
-                    runningConfiguration = ExperienceConfiguration(
-                        mode: .track,
-                        target: .map(code: object.objectCode),
-                        objectCodes: [object.objectCode]
-                    )
+                    runningMode = .trackObjects(codes: [object.objectCode])
                 }
                 .msButton(.primary, fullWidth: false)
                 .disabled(!object.status.isReady)

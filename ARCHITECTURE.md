@@ -47,6 +47,44 @@ in `Config/*.xcconfig`, not in the project.
 The prefix lives once, in `Config/Shared.xcconfig` as
 `MULTISET_BUNDLE_ID_PREFIX`; both targets derive from it.
 
+## Two AR paths, and why
+
+The app has two ways to run an AR session, because the two audiences have
+incompatible constraints.
+
+| | Driven by | Used for | Mesh overlay |
+|---|---|---|---|
+| **SDK path** | `MultiSetSDK` v1.15.0 via `MultiSetARView` | Test localization and Test tracking, from Map and Object Detail | Yes — the SDK downloads and renders it |
+| **REST path** | `MultiSetARCore`'s `RESTPoseProvider` | Hosted experiences, in the app *and* the App Clip | No |
+
+**The SDK path lets the SDK own the AR session.** `MultiSetARView` installs the
+SDK's own `ARSession` delegate, creates the gizmo anchor that map meshes are
+parented to, adds a separate world-fixed anchor for object meshes, and adds
+lighting. The mesh pipeline only works if the SDK sets the scene up itself, so
+these screens embed `MultiSetARView` rather than the app's own `ARSceneHost`.
+
+With `meshVisualization` on, the SDK does the whole mesh pipeline internally:
+`GET /v1/vps/map/{mapCode}` for the mesh link, `GET /v1/file?key=` for a signed
+URL, GLB download with an on-disk cache, then render under the gizmo anchor with a
+reveal animation — and for a MapSet, applying the localized map's `relativePose`.
+Object tracking does the same through `objectMesh.meshLink` and renders an outline
+traced along the real object's silhouette. The app subscribes to `onMeshLoaded` and
+`onObjectMeshLoaded` and reports mesh state in the HUD separately from fix state,
+because a fix can succeed while the mesh is still downloading.
+
+v1.15.0 also brings pose-consistency checking. When the server returns a pose that
+contradicts the device's own motion by more than `poseConsistencyThreshold`, the SDK
+discards it and calls `onLocalizationFalsePositive` instead of success or failure —
+nothing in the scene moves. That is surfaced as its own state, since treating it as
+a failure would be wrong: the request succeeded.
+
+An earlier attempt drove the SDK from the app's own `ARView` with
+`meshVisualization` off. That could never render a mesh and was the wrong shape for
+the SDK's ownership model; it has been removed.
+
+**The REST path stays** because the App Clip cannot link the SDK at all, for the
+reason below.
+
 ## The constraint that shapes everything
 
 `MultiSetConfig.init` requires a `clientId` **and** a `clientSecret`, and
