@@ -8,6 +8,7 @@ struct OnboardingView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private struct Card {
+        let imageName: String
         let illustration: MSIllustration
         let headline: String
         let body: String
@@ -15,16 +16,19 @@ struct OnboardingView: View {
 
     private let cards = [
         Card(
+            imageName: "OnboardingMap",
             illustration: .noMaps,
             headline: "Your space, mapped",
             body: "MultiSet turns a scan of a building into spatial ground truth — a map any camera can recognise."
         ),
         Card(
+            imageName: "OnboardingLocalize",
             illustration: .searching(progress: 0.85),
             headline: "The phone knows where it is",
             body: "Point the camera at the room and VPS works out exactly where you're standing, to within five centimetres."
         ),
         Card(
+            imageName: "OnboardingGuide",
             illustration: .noObjects,
             headline: "Hand it to a stranger",
             body: "Publish an experience, print the code, and anyone can scan it and follow the line. No install, no account."
@@ -69,7 +73,7 @@ struct OnboardingView: View {
     private func card(_ card: Card) -> some View {
         VStack(spacing: MSSpacing.xl) {
             Spacer(minLength: 0)
-            MSIllustrationView(card.illustration, size: 180)
+            artwork(card)
             VStack(spacing: MSSpacing.md) {
                 Text(card.headline)
                     .font(MSFont.display)
@@ -83,6 +87,27 @@ struct OnboardingView: View {
             Spacer(minLength: 0)
         }
         .padding(.horizontal, MSSpacing.xl)
+    }
+
+    /// Falls back to the geometric family if the image is absent, so a missing
+    /// asset degrades rather than leaving a blank card.
+    @ViewBuilder
+    private func artwork(_ card: Card) -> some View {
+        if let image = UIImage(named: card.imageName) {
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(maxWidth: .infinity)
+                .frame(height: 260)
+                .clipShape(RoundedRectangle(cornerRadius: MSRadius.xl))
+                .overlay(
+                    RoundedRectangle(cornerRadius: MSRadius.xl)
+                        .strokeBorder(MSColor.borderSubtle, lineWidth: 1)
+                )
+                .accessibilityHidden(true)
+        } else {
+            MSIllustrationView(card.illustration, size: 180)
+        }
     }
 }
 

@@ -146,7 +146,10 @@ It is not one.
 
 Every AR overlay — path ribbon, chevrons, POI markers, object outlines, origin
 gizmo — is generated at runtime, and the Clip's asset catalog holds only an icon
-set. Both are verified by `Scripts/check-clip-size.sh`.
+set and two colours. The photographic imagery in
+`ProductionAssets/MultiSetProductionAssets.xcassets` joins the **app target
+only**; the App Clip card header goes to App Store Connect rather than into the
+bundle. Verified by inspecting the compiled `Assets.car` of both bundles.
 
 ### Clip surface — known limitation
 
@@ -201,3 +204,5 @@ None block the work done so far. Each needs credentials or a mapped site.
 - The 3D showcase sandbox. It needs 4–6 licensed USDZ models, and the asset brief
   is explicit that generated 3D is not production quality for AR. Sourcing with
   recorded licences is the blocking step, not the code.
+- Phases 2–6 of the build prompt beyond what is built here: POI authoring on a
+  map, nav-graph editing, and the full publish round trip against a live account.

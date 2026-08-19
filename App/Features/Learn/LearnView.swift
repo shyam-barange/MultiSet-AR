@@ -49,6 +49,14 @@ struct LearnView: View {
     private func capabilityCard(_ capability: Capability) -> some View {
         MSCard {
             VStack(alignment: .leading, spacing: MSSpacing.md) {
+                if let image = UIImage(named: capability.imageName) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(16 / 10, contentMode: .fill)
+                        .frame(maxWidth: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: MSRadius.md))
+                        .accessibilityHidden(true)
+                }
                 HStack(spacing: MSSpacing.md) {
                     Image(systemName: capability.symbolName)
                         .font(.system(size: 22, weight: .light))
@@ -220,6 +228,7 @@ struct Capability: Identifiable {
     let id: String
     let title: String
     let symbolName: String
+    let imageName: String
     let explainer: String
     let facts: [(String, String)]
     let link: URL
@@ -229,6 +238,7 @@ struct Capability: Identifiable {
             id: "vps",
             title: "Visual Positioning System",
             symbolName: "scope",
+            imageName: "LearnVPS",
             explainer: "Instant 6-DoF relocalization against a prebuilt map, holding accuracy through low light, glare, occlusion, and fast motion.",
             facts: [("ACCURACY", "≤ 5 cm"), ("RELOCK", "< 100 ms"), ("DRIFT", "< 0.1 % / min")],
             link: ExternalLink.vps
@@ -237,6 +247,7 @@ struct Capability: Identifiable {
             id: "object",
             title: "Object tracking",
             symbolName: "cube.transparent",
+            imageName: "LearnObjectTracking",
             explainer: "Recognises and tracks a specific physical object from any angle, so AR content can attach to equipment rather than to a room.",
             facts: [],
             link: ExternalLink.objectTracking
@@ -245,6 +256,7 @@ struct Capability: Identifiable {
             id: "mapping",
             title: "Mapping",
             symbolName: "square.stack.3d.down.right",
+            imageName: "LearnMapping",
             explainer: "Scan-agnostic: LiDAR, point clouds, textured meshes, Gaussian splats, 360° video, or an iPhone scan. Changing capture tool never means re-scanning.",
             facts: [],
             link: ExternalLink.mapping
@@ -253,6 +265,7 @@ struct Capability: Identifiable {
             id: "e57",
             title: "E57 → VPS",
             symbolName: "point.3.connected.trianglepath.dotted",
+            imageName: "LearnE57",
             explainer: "Turn an existing survey-grade E57 point cloud into a localizable map, without capturing the site again.",
             facts: [],
             link: ExternalLink.e57ToVPS
@@ -261,6 +274,7 @@ struct Capability: Identifiable {
             id: "3dgs",
             title: "3DGS → VPS",
             symbolName: "sparkles",
+            imageName: "Learn3DGS",
             explainer: "Use a Gaussian splat reconstruction as the basis for localization, keeping its visual fidelity.",
             facts: [],
             link: ExternalLink.gaussianSplatToVPS
@@ -269,6 +283,7 @@ struct Capability: Identifiable {
             id: "360",
             title: "360 → VPS",
             symbolName: "pano",
+            imageName: "Learn360",
             explainer: "Build a map from 360° imagery — the fastest way to cover a large interior.",
             facts: [],
             link: ExternalLink.panoramaToVPS

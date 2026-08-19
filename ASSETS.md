@@ -29,22 +29,52 @@ do — and it needs no catalog entry, which keeps the Clip's catalog to an icon 
 alone. Swap to the SVGs if a designer prefers them; they would need adding to both
 targets and marking as template-rendered to tint.
 
+## Photographic imagery — `ProductionAssets/`
+
+Produced to the direction in `Assets/multiset-ar-asset-production-brief.md`.
+
+| | |
+|---|---|
+| Ships as | `ProductionAssets/MultiSetProductionAssets.xcassets`, in the **App target only** |
+| Contents | 3 onboarding illustrations + 6 Learn capability cards, light and dark each |
+| Format | HEIC, per the brief's format note |
+| Onboarding | 1290² · `OnboardingMap`, `OnboardingLocalize`, `OnboardingGuide` |
+| Learn | 16:10 · `LearnVPS`, `LearnObjectTracking`, `LearnMapping`, `LearnE57`, `Learn3DGS`, `Learn360` |
+| Clip card header | `ProductionAssets/Optimized/Clip/clip-card-header.heic`, 3000×2000. **Uploaded to App Store Connect, never bundled** — the Clip's catalog stays at an icon set alone. |
+| Provenance | `ProductionAssets/Prompts/*.tsv` records the generator output path per image |
+
+Both view layers fall back to the geometric illustration family if a named image
+is missing, so a dropped asset degrades instead of leaving a blank card.
+
+### Repo size
+
+`ProductionAssets/Raster/` is 99 MB of full-resolution source PNGs; everything
+that ships is the 3.5 MB of HEIC in `Optimized/` and the asset catalog. The
+rasters are tracked because the `Prompts/` TSVs point at paths outside the repo,
+making these the only durable copy — but they will slow clones. **Recommend
+moving `ProductionAssets/Raster/**` to Git LFS.** Not done here: converting
+rewrites history, which is the repo owner's call.
+
+`ProductionAssets/QA/` is empty; the brief's §12 checklist has not been run
+against the final assets yet.
+
 ## App icon
 
 | | |
 |---|---|
-| Source | `Assets/multiset_logo.png` (2048², the brand mark) |
-| Generator | `Scripts/generate-app-icon.swift` |
-| Command | `swift Scripts/generate-app-icon.swift Assets/multiset_logo.png App/Resources/Assets.xcassets/AppIcon.appiconset` |
-| Output | `AppIcon-Light.png`, `AppIcon-Dark.png`, `AppIcon-Tinted.png` — 1024², opaque, no alpha |
-| Idea | The brand mark as a survey control point: mark centred in a registration cross and ring. Two elements, no text, no gradient carrying the design. |
-| Tinted variant | Pre-flattened to luminance with a lift, so the facets stay distinguishable when iOS renders it single-colour |
+| Ships from | `ProductionAssets/AppIcon/app-icon-{light,dark,tinted}.png` |
+| Installed at | `App/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-{Light,Dark,Tinted}-Production.png` |
+| Spec | 1024², opaque, no alpha — verified with `sips -g hasAlpha` |
+| Idea | The brand mark as a survey control point: the mark centred in a registration cross with tick terminals. Two elements, no text, no gradient carrying the design. |
 | Clip icon | Same files. Apple applies its own Clip badge — not pre-badged. |
 
-**Reviewed at 40 pt:** the mark reads clearly; the cross and ring recede almost
-entirely. That is the intended trade — the brand mark is what must be
-recognisable at small sizes, and the registration treatment is a large-size
-refinement. Worth a designer's eye before submission.
+`Scripts/generate-app-icon.swift` builds the same idea from
+`Assets/multiset_logo.png` and was used before the production icons arrived. It is
+kept for exploring variants and is marked superseded in its header — **do not
+regenerate over the production files.**
+
+**Still to check at 40 pt** beside the existing MultiSet app, in all three
+variants, per the brief's §12 checklist.
 
 ## Colour
 
@@ -73,8 +103,5 @@ engineering data.
 
 | Asset | Blocker |
 |---|---|
-| Onboarding illustrations (3) | Currently the geometric illustration family. The brief's photographic direction needs a locked style anchor first. |
-| App Clip card header | Needs iteration to a genuinely good result — it is the product's first impression and the style anchor for everything else. |
-| Learn capability cards (6) | Should follow the locked style anchor. |
 | USDZ showcase models (4–6) | Need licensed sources; generated 3D is not production quality for AR. Record each licence here. |
 | App Store screenshots and preview video | Need a real mapped site and official Apple device frames. |

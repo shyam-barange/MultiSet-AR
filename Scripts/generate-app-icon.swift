@@ -1,6 +1,11 @@
 #!/usr/bin/env swift
 // Renders the three App Icon variants iOS 18+ expects from the brand mark.
 //
+// SUPERSEDED. The shipping icons come from ProductionAssets/AppIcon/, which
+// executes the same idea better. Kept because it documents the construction and
+// is useful for exploring variants — but do not regenerate over the production
+// files without checking ASSETS.md first.
+//
 // The AR-specific idea, per Assets/multiset-ar-asset-production-brief.md, is the
 // mark as a survey control point: the brand hexahedron centred in a thin
 // registration cross. Two elements, no text, no gradient carrying the design.
