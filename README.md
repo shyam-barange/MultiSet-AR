@@ -45,6 +45,52 @@ reachable from the Clip binary.
 ./Scripts/sync-app-icon.sh                    # re-copies the icon masters into both catalogs
 ```
 
+## Triggering the App Clip
+
+Three ways, in increasing order of setup.
+
+### 1. From Xcode — no hosting needed
+
+The **MultiSet AR Clip** scheme is shared and carries an `_XCAppClipURL`
+environment variable. Edit it to a real Content Space code and run:
+
+```
+Product → Scheme → Edit Scheme → Run → Arguments → Environment Variables
+_XCAppClipURL = https://api.multiset.ai/space/<your-space-code>
+```
+
+Xcode synthesises the invocation from that variable. It only works when Xcode
+launches the app.
+
+### 2. From the command line — Debug builds
+
+`simctl` sets the environment variable but nothing synthesises the user activity
+from it, so Debug builds accept the URL directly:
+
+```sh
+xcrun simctl launch <device> com.multiset.sdk.Clip     -MSClipURL "https://api.multiset.ai/space/<your-space-code>"
+```
+
+This is how the failure states are exercised without a device. Debug only — a
+shipping Clip can be invoked only for real.
+
+### 3. On a device, for real
+
+Either a **Local Experience**, which needs no hosting:
+
+> Settings → Developer → Local Experience → Register
+> URL prefix `https://api.multiset.ai/space/` · Bundle ID `com.multiset.sdk.Clip`
+
+…then open the URL in Safari or scan the QR. Or a full invocation, which needs
+both of:
+
+- `https://api.multiset.ai/.well-known/apple-app-site-association` served with an
+  `appclips` entry for `<TEAM_ID>.com.multiset.sdk.Clip`
+- an Advanced App Clip Experience registered in App Store Connect for that URL
+
+**Neither is live yet** — see the open items in [ARCHITECTURE.md](ARCHITECTURE.md).
+Until the AASA file exists, use options 1 and 2.
+
 ## Project file
 
 `MultiSet AR.xcodeproj` is **generated**. After adding or removing a source file:
